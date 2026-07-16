@@ -1,0 +1,237 @@
+.panel {
+    margin-top: 25px;
+}
+
+.panel:first-of-type {
+    margin-top: 0;
+}
+
+#novoRegistro {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#novoRegistro i {
+    font-size: 14px;
+}
+
+#pesquisa,
+#filtroTipo {
+    height: 52px;
+}
+
+table td:last-child {
+    width: 180px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.editar,
+.excluir {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.editar i,
+.excluir i {
+    font-size: 15px;
+}
+
+.editar:hover,
+.excluir:hover {
+    transform: scale(1.08);
+}
+
+#listaSustentabilidade td:nth-child(1) {
+    font-weight: 600;
+}
+
+#listaSustentabilidade td:nth-child(2) {
+    font-weight: 600;
+    color: #16a34a;
+}
+
+#listaSustentabilidade td:nth-child(3) {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+#listaSustentabilidade td:nth-child(4) {
+    font-weight: 500;
+}
+
+.modal {
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    max-width: 720px;
+}
+
+.modal-content h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+.modal-content .grid-2 {
+    margin-bottom: 15px;
+}
+
+.modal-content button {
+    min-width: 120px;
+}
+
+.card {
+    cursor: default;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn {
+    transition: .25s;
+}
+
+.btn:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,.15);
+}
+
+.btn-success:hover {
+    background: #16a34a;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+}
+
+tbody tr {
+    animation: aparecer .35s ease;
+}
+
+@keyframes aparecer {
+
+    from {
+
+        opacity: 0;
+        transform: translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+        transform: translateY(0);
+
+    }
+
+}
+
+table {
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+thead th:first-child {
+    border-top-left-radius: 10px;
+}
+
+thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+body.dark .modal-content {
+    background: #1f2937;
+}
+
+body.dark .modal-content h2 {
+    color: white;
+}
+
+body.dark input,
+body.dark select {
+    background: #111827;
+    color: white;
+}
+
+body.dark table {
+    color: white;
+}
+
+body.dark table tbody tr:hover {
+    background: #2d3748;
+}
+
+@media (max-width:900px){
+
+    table td:last-child{
+
+        width:auto;
+
+    }
+
+    .modal-content{
+
+        padding:25px;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    #novoRegistro{
+
+        width:100%;
+        justify-content:center;
+
+    }
+
+    table{
+
+        min-width:850px;
+
+    }
+
+}
+
+@media (max-width:520px){
+
+    .modal-content{
+
+        width:95%;
+        padding:20px;
+
+    }
+
+    .modal-content h2{
+
+        font-size:22px;
+
+    }
+
+    .modal-content button{
+
+        width:100%;
+
+    }
+
+}

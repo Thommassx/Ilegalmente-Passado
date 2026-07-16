@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EcoFactory | Máquinas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/maquinas.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-industry"></i>
+            </div>
+
+            <div class="logo-text">
+                <h2>EcoFactory</h2>
+                <span>Industrial Manager</span>
+            </div>
+
+        </div>
+
+        <nav class="menu">
+
+            <a href="index.html">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </a>
+
+            <a href="maquinas.html" class="active">
+                <i class="fa-solid fa-gears"></i>
+                Máquinas
+            </a>
+
+            <a href="producao.html">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                Produção
+            </a>
+
+            <a href="sustentabilidade.html">
+                <i class="fa-solid fa-leaf"></i>
+                Sustentabilidade
+            </a>
+
+            <a href="seguranca.html">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Segurança
+            </a>
+
+        </nav>
+
+    <div class="sidebar-footer">
+
+        <img src="https://i.pravatar.cc/60" alt="Administrador">
+
+        <div>
+
+            <strong>Administrador</strong>
+
+            <p>admin@ecofactory.com</p>
+
+        </div>
+
+    </div>
+
+</aside>
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Gerenciamento de Máquinas</h1>
+
+                <span>Cadastre, edite e monitore os equipamentos industriais.</span>
+
+            </div>
+
+            <button class="btn btn-primary" id="novaMaquina">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Nova Máquina
+
+            </button>
+
+        </header>
+
+        <section class="cards">
+
+            <div class="card">
+
+                <div class="card-info">
+
+                    <span>Total</span>
+
+                    <h2 id="totalMaquinas">0</h2>
+
+                </div>
+
+                <div class="card-icon blue">
+
+                    <i class="fa-solid fa-gears"></i>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-info">
+
+                    <span>Em Operação</span>
+
+                    <h2 id="ativas">0</h2>
+
+                </div>
+
+                <div class="card-icon green">
+
+                    <i class="fa-solid fa-play"></i>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-info">
+
+                    <span>Manutenção</span>
+
+                    <h2 id="manutencao">0</h2>
+
+                </div>
+
+                <div class="card-icon yellow">
+
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-info">
+
+                    <span>Paradas</span>
+
+                    <h2 id="paradas">0</h2>
+
+                </div>
+
+                <div class="card-icon red">
+
+                    <i class="fa-solid fa-circle-stop"></i>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <div class="panel">
+
+            <div class="grid-2">
+
+                <div class="form-group">
+
+                    <label>Pesquisar Máquina</label>
+
+                    <input
+                        type="text"
+                        id="pesquisa"
+                        placeholder="Digite o nome da máquina">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Status</label>
+
+                    <select id="filtroStatus">
+
+                        <option value="">Todos</option>
+
+                        <option value="Em operação">Em operação</option>
+
+                        <option value="Manutenção">Manutenção</option>
+
+                        <option value="Parada">Parada</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="panel mt-20">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Máquina</th>
+
+                        <th>Setor</th>
+
+                        <th>Tipo</th>
+
+                        <th>Status</th>
+
+                        <th>Temperatura</th>
+
+                        <th>Energia</th>
+
+                        <th>Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="listaMaquinas">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <h2 id="tituloModal">
+
+            Nova Máquina
+
+        </h2>
+
+        <form id="formMaquina">
+
+            <div class="grid-2">
+
+                <div class="form-group">
+
+                    <label>Nome</label>
+
+                    <input
+                        id="nome"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Setor</label>
+
+                    <input
+                        id="setor"
+                        required>
+
+                </div>
+
+            </div>
+
+            <div class="grid-2">
+
+                <div class="form-group">
+
+                    <label>Tipo</label>
+
+                    <select id="tipo">
+
+                        <option>CNC</option>
+
+                        <option>Prensa</option>
+
+                        <option>Solda</option>
+
+                        <option>Torno</option>
+
+                        <option>Laser</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Status</label>
+
+                    <select id="status">
+
+                        <option>Em operação</option>
+
+                        <option>Manutenção</option>
+
+                        <option>Parada</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="grid-2">
+
+                <div class="form-group">
+
+                    <label>Temperatura (°C)</label>
+
+                    <input
+                        type="number"
+                        id="temperatura">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Consumo (kWh)</label>
+
+                    <input
+                        type="number"
+                        id="energia">
+
+                </div>
+
+            </div>
+
+            <div
+                class="mt-20"
+                style="display:flex;justify-content:flex-end;gap:15px;">
+
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="cancelar">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    class="btn btn-success">
+
+                    Salvar
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="js/maquinas.js"></script>
+
+</body>
+
+</html>

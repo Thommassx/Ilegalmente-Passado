@@ -1,0 +1,216 @@
+.panel{
+    margin-top:25px;
+}
+
+.panel:first-of-type{
+    margin-top:0;
+}
+
+#novaOcorrencia{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+#novaOcorrencia i{
+    font-size:14px;
+}
+
+#pesquisa,
+#filtroNivel{
+    height:52px;
+}
+
+table td:last-child{
+    width:180px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.editar,
+.excluir{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+}
+
+.editar:hover,
+.excluir:hover{
+    transform:scale(1.08);
+}
+
+#listaOcorrencias td:nth-child(1){
+    font-weight:600;
+}
+
+#listaOcorrencias td:nth-child(2){
+    color:#2563eb;
+    font-weight:500;
+}
+
+#listaOcorrencias td:nth-child(3){
+    max-width:350px;
+}
+
+.status{
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    min-width:90px;
+    padding:6px 14px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+    color:#fff;
+}
+
+.status.baixo{
+    background:#22c55e;
+}
+
+.status.médio{
+    background:#f59e0b;
+}
+
+.status.alto{
+    background:#ef4444;
+}
+
+.modal{
+    backdrop-filter:blur(4px);
+}
+
+.modal-content{
+    max-width:760px;
+}
+
+.modal-content textarea{
+    width:100%;
+    min-height:130px;
+    resize:vertical;
+    padding:15px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    font-family:inherit;
+    font-size:15px;
+}
+
+.modal-content textarea:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+.card{
+    cursor:default;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+tbody tr{
+    animation:fade .3s ease;
+}
+
+@keyframes fade{
+
+    from{
+
+        opacity:0;
+        transform:translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateY(0);
+
+    }
+
+}
+
+.btn{
+    transition:.25s;
+}
+
+.btn:hover{
+    box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.btn-success:hover{
+    background:#16a34a;
+}
+
+.btn-danger:hover{
+    background:#dc2626;
+}
+
+.btn-warning:hover{
+    background:#d97706;
+}
+
+body.dark textarea{
+    background:#111827;
+    color:white;
+    border-color:#374151;
+}
+
+body.dark textarea:focus{
+    border-color:#3b82f6;
+}
+
+body.dark table{
+    color:white;
+}
+
+body.dark table tbody tr:hover{
+    background:#2d3748;
+}
+
+@media(max-width:900px){
+
+    table{
+
+        min-width:950px;
+
+    }
+
+    .modal-content{
+
+        width:95%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    #novaOcorrencia{
+
+        width:100%;
+        justify-content:center;
+
+    }
+
+}
+
+@media(max-width:520px){
+
+    .modal-content{
+
+        padding:20px;
+
+    }
+
+    .modal-content textarea{
+
+        min-height:100px;
+
+    }
+
+}
