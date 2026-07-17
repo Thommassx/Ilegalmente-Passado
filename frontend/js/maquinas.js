@@ -1,54 +1,66 @@
-let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [
-    {
-        id: 1,
-        nome: "CNC-01",
-        setor: "Usinagem",
-        tipo: "CNC",
-        status: "Em operação",
-        temperatura: 42,
-        energia: 180
-    },
-    {
-        id: 2,
-        nome: "Prensa-02",
-        setor: "Montagem",
-        tipo: "Prensa",
-        status: "Manutenção",
-        temperatura: 0,
-        energia: 0
-    },
-    {
-        id: 3,
-        nome: "Laser-05",
-        setor: "Corte",
-        tipo: "Laser",
-        status: "Em operação",
-        temperatura: 36,
-        energia: 140
-    }
-];
+// =========================
+// CONFIGURAÇÕES
+// =========================
 
+const API = "http://localhost:3000/api/maquinas";
+
+let maquinas = [];
 let editando = null;
 
+// =========================
+// ELEMENTOS DA PÁGINA
+// =========================
+
 const tbody = document.getElementById("listaMaquinas");
-
 const modal = document.getElementById("modal");
-
 const form = document.getElementById("formMaquina");
 
 const pesquisa = document.getElementById("pesquisa");
-
 const filtro = document.getElementById("filtroStatus");
 
 const btnNova = document.getElementById("novaMaquina");
-
 const cancelar = document.getElementById("cancelar");
 
-function salvarLocalStorage() {
+const campos = {
+    nome: document.getElementById("nome"),
+    setor: document.getElementById("setor"),
+    tipo: document.getElementById("tipo"),
+    status: document.getElementById("status"),
+    temperatura: document.getElementById("temperatura"),
+    energia: document.getElementById("energia")
+};
 
-    localStorage.setItem("maquinas", JSON.stringify(maquinas));
+// =========================
+// API
+// =========================
+
+async function carregarMaquinas() {
+
+    try {
+
+        const resposta = await fetch(API);
+
+        if (!resposta.ok) {
+            throw new Error("Erro ao buscar máquinas.");
+        }
+
+        maquinas = await resposta.json();
+
+        renderizarTabela();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert("Não foi possível carregar as máquinas.");
+
+    }
 
 }
+
+// =========================
+// MODAL
+// =========================
 
 function abrirModal() {
 
@@ -82,9 +94,14 @@ window.addEventListener("click", (e) => {
 
 });
 
+// =========================
+// DASHBOARD
+// =========================
+
 function atualizarCards() {
 
-    document.getElementById("totalMaquinas").textContent = maquinas.length;
+    document.getElementById("totalMaquinas").textContent =
+        maquinas.length;
 
     document.getElementById("ativas").textContent =
         maquinas.filter(m => m.status === "Em operação").length;
@@ -97,25 +114,40 @@ function atualizarCards() {
 
 }
 
-function classeStatus(status){
+// =========================
+// STATUS
+// =========================
 
-    if(status==="Em operação") return "ativo";
+function classeStatus(status) {
 
-    if(status==="Manutenção") return "manutencao";
+    switch (status) {
 
-    return "parado";
+        case "Em operação":
+            return "ativo";
+
+        case "Manutenção":
+            return "manutencao";
+
+        default:
+            return "parado";
+
+    }
 
 }
 
-function renderizarTabela(lista = maquinas){
+// =========================
+// TABELA
+// =========================
 
-    tbody.innerHTML="";
+function renderizarTabela(lista = maquinas) {
 
-    lista.forEach(maquina=>{
+    tbody.innerHTML = "";
 
-        const tr=document.createElement("tr");
+    lista.forEach(maquina => {
 
-        tr.innerHTML=`
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
 
         <td>${maquina.nome}</td>
 
@@ -141,7 +173,7 @@ function renderizarTabela(lista = maquinas){
 
             <button
                 class="btn btn-warning editar"
-                data-id="${maquina.id}">
+                data-id="${maquina.id_maquina}">
 
                 <i class="fa-solid fa-pen"></i>
 
@@ -149,7 +181,7 @@ function renderizarTabela(lista = maquinas){
 
             <button
                 class="btn btn-danger excluir"
-                data-id="${maquina.id}">
+                data-id="${maquina.id_maquina}">
 
                 <i class="fa-solid fa-trash"></i>
 
@@ -168,128 +200,188 @@ function renderizarTabela(lista = maquinas){
     atualizarCards();
 
 }
+// =========================
+// EVENTOS DOS BOTÕES
+// =========================
 
-function adicionarEventos(){
+function adicionarEventos() {
 
-    document.querySelectorAll(".editar").forEach(botao=>{
+    document.querySelectorAll(".editar").forEach(botao => {
 
-        botao.onclick=()=>{
-
-            editarMaquina(botao.dataset.id);
-
-        };
+        botao.onclick = () => editarMaquina(botao.dataset.id);
 
     });
 
-    document.querySelectorAll(".excluir").forEach(botao=>{
+    document.querySelectorAll(".excluir").forEach(botao => {
 
-        botao.onclick=()=>{
-
-            excluirMaquina(botao.dataset.id);
-
-        };
+        botao.onclick = () => excluirMaquina(botao.dataset.id);
 
     });
 
 }
 
-function editarMaquina(id){
+// =========================
+// EDITAR
+// =========================
 
-    const maquina=maquinas.find(m=>m.id==id);
+function editarMaquina(id) {
 
-    editando=id;
+    const maquina = maquinas.find(m => m.id_maquina == id);
 
-    document.getElementById("tituloModal").textContent="Editar Máquina";
+    if (!maquina) return;
 
-    document.getElementById("nome").value=maquina.nome;
+    editando = id;
 
-    document.getElementById("setor").value=maquina.setor;
+    document.getElementById("tituloModal").textContent = "Editar Máquina";
 
-    document.getElementById("tipo").value=maquina.tipo;
-
-    document.getElementById("status").value=maquina.status;
-
-    document.getElementById("temperatura").value=maquina.temperatura;
-
-    document.getElementById("energia").value=maquina.energia;
+    campos.nome.value = maquina.nome;
+    campos.setor.value = maquina.setor;
+    campos.tipo.value = maquina.tipo;
+    campos.status.value = maquina.status;
+    campos.temperatura.value = maquina.temperatura;
+    campos.energia.value = maquina.energia;
 
     abrirModal();
 
 }
 
-function excluirMaquina(id){
+// =========================
+// EXCLUIR
+// =========================
 
-    const confirmar=confirm("Deseja realmente excluir esta máquina?");
+async function excluirMaquina(id) {
 
-    if(!confirmar) return;
+    if (!confirm("Deseja realmente excluir esta máquina?")) return;
 
-    maquinas=maquinas.filter(m=>m.id!=id);
+    try {
 
-    salvarLocalStorage();
+        const resposta = await fetch(`${API}/${id}`, {
 
-    renderizarTabela();
+            method: "DELETE"
 
-}
+        });
 
-form.addEventListener("submit",(e)=>{
+        if (!resposta.ok) {
 
-    e.preventDefault();
+            throw new Error("Erro ao excluir.");
 
-    const maquina={
+        }
 
-        id:editando ? Number(editando) : Date.now(),
+        await carregarMaquinas();
 
-        nome:document.getElementById("nome").value,
+    } catch (erro) {
 
-        setor:document.getElementById("setor").value,
+        console.error(erro);
 
-        tipo:document.getElementById("tipo").value,
-
-        status:document.getElementById("status").value,
-
-        temperatura:Number(document.getElementById("temperatura").value),
-
-        energia:Number(document.getElementById("energia").value)
-
-    };
-
-    if(editando){
-
-        const indice=maquinas.findIndex(m=>m.id==editando);
-
-        maquinas[indice]=maquina;
-
-    }else{
-
-        maquinas.push(maquina);
+        alert("Erro ao excluir a máquina.");
 
     }
 
-    salvarLocalStorage();
+}
 
-    renderizarTabela();
+// =========================
+// FORMULÁRIO
+// =========================
 
-    fecharModal();
+form.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const maquina = {
+
+        nome: campos.nome.value.trim(),
+
+        setor: campos.setor.value.trim(),
+
+        tipo: campos.tipo.value.trim(),
+
+        status: campos.status.value,
+
+        temperatura: Number(campos.temperatura.value),
+
+        energia: Number(campos.energia.value)
+
+    };
+
+    try {
+
+        let resposta;
+
+        if (editando) {
+
+            resposta = await fetch(`${API}/${editando}`, {
+
+                method: "PUT",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify(maquina)
+
+            });
+
+        } else {
+
+            resposta = await fetch(API, {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify(maquina)
+
+            });
+
+        }
+
+        if (!resposta.ok) {
+
+            throw new Error("Erro ao salvar.");
+
+        }
+
+        await carregarMaquinas();
+
+        fecharModal();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert("Erro ao salvar a máquina.");
+
+    }
 
 });
 
-pesquisa.addEventListener("keyup",filtrar);
+// =========================
+// FILTROS
+// =========================
 
-filtro.addEventListener("change",filtrar);
+pesquisa.addEventListener("keyup", filtrar);
 
-function filtrar(){
+filtro.addEventListener("change", filtrar);
 
-    const texto=pesquisa.value.toLowerCase();
+function filtrar() {
 
-    const status=filtro.value;
+    const texto = pesquisa.value.toLowerCase();
 
-    const lista=maquinas.filter(maquina=>{
+    const status = filtro.value;
 
-        const nome=maquina.nome.toLowerCase().includes(texto);
+    const lista = maquinas.filter(maquina => {
 
-        const filtroStatus=status==="" || maquina.status===status;
+        const nome = maquina.nome.toLowerCase().includes(texto);
 
-        return nome && filtroStatus;
+        const statusValido = status === "" || maquina.status === status;
+
+        return nome && statusValido;
 
     });
 
@@ -297,4 +389,8 @@ function filtrar(){
 
 }
 
-renderizarTabela();
+// =========================
+// INICIALIZAÇÃO
+// =========================
+
+carregarMaquinas();
