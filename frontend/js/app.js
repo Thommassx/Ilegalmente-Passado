@@ -2,15 +2,40 @@
 // ECOFACTORY - DASHBOARD
 // ======================================================
 
+const API = "http://localhost:3000/api/maquinas";
+
+let graficoProducao;
+
+const dashboard = {
+
+    maquinasAtivas: 0,
+
+    producaoHoje: 0,
+
+    energia: 0,
+
+    ocorrencias: 0
+
+};
+
+
 // ======================================================
 // GRÁFICO DE PRODUÇÃO
 // ======================================================
 
-const ctx = document.getElementById("graficoProducao");
+function criarGraficoProducao(valores = []) {
 
-if (ctx) {
+    const ctx = document.getElementById("graficoProducao");
 
-    new Chart(ctx, {
+    if (!ctx) return;
+
+    if (graficoProducao) {
+
+        graficoProducao.destroy();
+
+    }
+
+    graficoProducao = new Chart(ctx, {
 
         type: "line",
 
@@ -30,22 +55,28 @@ if (ctx) {
 
                 label: "Produção",
 
-                data: [
-                    6200,
-                    7100,
-                    6950,
-                    8100,
-                    8540,
-                    7900,
-                    8300
+                data: valores.length ? valores : [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
                 ],
 
                 borderColor: "#2563eb",
+
                 backgroundColor: "rgba(37,99,235,.15)",
+
                 borderWidth: 3,
+
                 fill: true,
+
                 tension: .35,
+
                 pointRadius: 5,
+
                 pointHoverRadius: 7
 
             }]
@@ -100,87 +131,49 @@ if (ctx) {
 
 }
 
-// ======================================================
-// DADOS DO DASHBOARD
-// ======================================================
-
-const dashboard = {
-
-    total: 0,
-
-    maquinasAtivas: 0,
-
-    manutencao: 0,
-
-    paradas: 0,
-
-    producaoHoje: 8540,
-
-    energia: 620,
-
-    ocorrencias: 2
-
-};
-
-const API = "http://localhost:3000/api/maquinas";
 
 // ======================================================
-// ATUALIZA CARDS
+// ATUALIZA OS CARDS
 // ======================================================
 
-function carregarDashboard() {
+function atualizarDashboard() {
 
-    const total = document.getElementById("totalMaquinas");
+    const maquinasAtivas =
+        document.getElementById("maquinasAtivas");
 
-    if (total) {
+    const producaoHoje =
+        document.getElementById("producaoHoje");
 
-        total.textContent = dashboard.total;
+    const energia =
+        document.getElementById("energia");
+
+    const ocorrencias =
+        document.getElementById("ocorrencias");
+
+
+    if (maquinasAtivas) {
+
+        maquinasAtivas.textContent =
+            dashboard.maquinasAtivas;
 
     }
 
-    const ativas = document.getElementById("maquinasAtivas");
 
-    if (ativas) {
+    if (producaoHoje) {
 
-        ativas.textContent = dashboard.maquinasAtivas;
-
-    }
-
-    const manutencao = document.getElementById("manutencao");
-
-    if (manutencao) {
-
-        manutencao.textContent = dashboard.manutencao;
-
-    }
-
-    const paradas = document.getElementById("paradas");
-
-    if (paradas) {
-
-        paradas.textContent = dashboard.paradas;
-
-    }
-
-    const producao = document.getElementById("producaoHoje");
-
-    if (producao) {
-
-        producao.textContent =
+        producaoHoje.textContent =
             dashboard.producaoHoje.toLocaleString("pt-BR");
 
     }
 
-    const energia = document.getElementById("energia");
 
     if (energia) {
 
         energia.textContent =
-            `${dashboard.energia} kWh`;
+            dashboard.energia + " kWh";
 
     }
 
-    const ocorrencias = document.getElementById("ocorrencias");
 
     if (ocorrencias) {
 
@@ -190,30 +183,72 @@ function carregarDashboard() {
     }
 
 }
+
+
+// ======================================================
+// BUSCA DADOS DA API
+// ======================================================
+
 async function carregarDashboard() {
 
     try {
 
         const resposta = await fetch(API);
 
+
+        if (!resposta.ok) {
+
+            throw new Error("Erro ao buscar máquinas.");
+
+        }
+
+
         const maquinas = await resposta.json();
 
-        dashboard.total = maquinas.length;
 
         dashboard.maquinasAtivas =
-            maquinas.filter(m => m.status === "Em operação").length;
+            maquinas.filter(
+                maquina => maquina.status === "Em operação"
+            ).length;
 
-        dashboard.manutencao =
-            maquinas.filter(m => m.status === "Manutenção").length;
 
-        dashboard.paradas =
-            maquinas.filter(m => m.status === "Parada").length;
+        dashboard.energia =
+            maquinas.reduce(
+                (total, maquina) =>
+                    total + Number(maquina.energia || 0),
+                0
+            );
+
+
+        dashboard.ocorrencias =
+            maquinas.filter(
+                maquina => maquina.status === "Manutenção"
+            ).length;
+
+
+        dashboard.producaoHoje =
+            maquinas.reduce(
+                (total, maquina) =>
+                    total + Number(maquina.producao || 0),
+                0
+            );
+
 
         atualizarDashboard();
 
-    } catch (erro) {
 
-        console.error("Erro ao carregar dashboard:", erro);
+        criarGraficoProducao(
+            maquinas.map(maquina =>
+                Number(maquina.producao || 0)
+            )
+        );
+
+
+    }
+
+    catch (erro) {
+
+        console.error(erro);
 
     }
 
@@ -231,15 +266,18 @@ function atualizarHora() {
 
 }
 
+
 setInterval(atualizarHora, 1000);
 
 atualizarHora();
+
 
 // ======================================================
 // NOTIFICAÇÕES
 // ======================================================
 
 const notification = document.querySelector(".notification");
+
 
 if (notification) {
 
@@ -259,11 +297,13 @@ if (notification) {
 
 }
 
+
 // ======================================================
 // PERFIL
 // ======================================================
 
 const profile = document.querySelector(".profile");
+
 
 if (profile) {
 
@@ -275,6 +315,7 @@ if (profile) {
 
 }
 
+
 // ======================================================
 // ANIMAÇÃO DAS BARRAS
 // ======================================================
@@ -285,14 +326,17 @@ document.querySelectorAll(".progress div").forEach(bar => {
 
     bar.style.width = "0";
 
+
     setTimeout(() => {
 
         bar.style.width = largura;
+
         bar.style.transition = "1.2s";
 
     }, 300);
 
 });
+
 
 // ======================================================
 // ANIMAÇÃO DOS CARDS
@@ -301,35 +345,22 @@ document.querySelectorAll(".progress div").forEach(bar => {
 document.querySelectorAll(".card").forEach((card, index) => {
 
     card.style.opacity = "0";
+
     card.style.transform = "translateY(25px)";
+
 
     setTimeout(() => {
 
         card.style.opacity = "1";
+
         card.style.transform = "translateY(0)";
+
         card.style.transition = ".5s";
 
     }, index * 150);
 
 });
 
-// ======================================================
-// SIMULAÇÃO DOS INDICADORES
-// ======================================================
-
-function simularProducao() {
-
-    dashboard.producaoHoje += Math.floor(Math.random() * 25);
-
-    dashboard.energia += Math.floor(Math.random() * 3);
-
-    atualizarDashboard();
-
-}
-
-setInterval(simularProducao, 7000);
-
-atualizarDashboard();
 
 // ======================================================
 // DARK MODE
@@ -345,6 +376,7 @@ document.addEventListener("keydown", (e) => {
 
 });
 
+
 // ======================================================
 // INICIALIZAÇÃO
 // ======================================================
@@ -352,5 +384,7 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
 
     console.log("EcoFactory iniciado.");
+
+    carregarDashboard();
 
 });

@@ -343,9 +343,13 @@ form.addEventListener("submit", async (e) => {
 
         if (!resposta.ok) {
 
-            throw new Error("Erro ao salvar.");
+    const erro = await resposta.text();
 
-        }
+    console.error("Resposta do servidor:", erro);
+
+    throw new Error(erro);
+
+}
 
         await carregarMaquinas();
 

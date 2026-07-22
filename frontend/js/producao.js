@@ -1,29 +1,6 @@
-let producoes = JSON.parse(localStorage.getItem("producoes")) || [
-    {
-        id: 1,
-        produto: "Parafuso M12",
-        maquina: "CNC-01",
-        quantidade: 2500,
-        data: "2026-07-16",
-        status: "Concluída"
-    },
-    {
-        id: 2,
-        produto: "Chapa de Aço",
-        maquina: "Laser-05",
-        quantidade: 1800,
-        data: "2026-07-16",
-        status: "Em andamento"
-    },
-    {
-        id: 3,
-        produto: "Suporte Metálico",
-        maquina: "Prensa-02",
-        quantidade: 900,
-        data: "2026-07-17",
-        status: "Pendente"
-    }
-];
+let producoes = [];
+
+const API = "http://localhost:3000/api/producao";
 
 let editando = null;
 
@@ -33,12 +10,22 @@ const form = document.getElementById("formProducao");
 const pesquisa = document.getElementById("pesquisa");
 const filtro = document.getElementById("filtroStatus");
 
+const produto = document.getElementById("produto");
+const maquina = document.getElementById("maquina");
+const quantidadeProduzida = document.getElementById("quantidadeProduzida");
+const quantidadeEsperada = document.getElementById("quantidadeEsperada");
+const data = document.getElementById("data");
+const status = document.getElementById("status");
+
+
 document.getElementById("novaProducao").onclick = abrirModal;
+
 document.getElementById("cancelar").onclick = fecharModal;
+
 
 window.onclick = (e)=>{
 
-    if(e.target===modal){
+    if(e.target === modal){
 
         fecharModal();
 
@@ -46,17 +33,52 @@ window.onclick = (e)=>{
 
 };
 
-function salvar(){
 
-    localStorage.setItem("producoes",JSON.stringify(producoes));
+// ======================================================
+// BUSCAR PRODUÇÕES
+// ======================================================
+
+async function carregarProducoes(){
+
+    try{
+
+        const resposta = await fetch(API);
+
+
+        if(!resposta.ok){
+
+            throw new Error("Erro ao buscar produções.");
+
+        }
+
+
+        producoes = await resposta.json();
+
+
+        renderizar();
+
+
+    }
+
+    catch(erro){
+
+        console.error(erro);
+
+    }
 
 }
+
+
+// ======================================================
+// MODAL
+// ======================================================
 
 function abrirModal(){
 
     modal.style.display="flex";
 
 }
+
 
 function fecharModal(){
 
@@ -66,28 +88,91 @@ function fecharModal(){
 
     editando=null;
 
-    document.getElementById("tituloModal").textContent="Nova Produção";
+
+    document.getElementById("tituloModal").textContent =
+    "Nova Produção";
 
 }
+
+
+// ======================================================
+// PRODUTIVIDADE
+// ======================================================
+
+function calcularProdutividade(item){
+
+    if(!item.quantidade_esperada){
+
+        return 0;
+
+    }
+
+
+    return (
+
+        Number(item.quantidade_produzida) /
+
+        Number(item.quantidade_esperada)
+
+    ) * 100;
+
+}
+
+
+// ======================================================
+// CARDS
+// ======================================================
 
 function atualizarCards(){
 
-    const concluidas=producoes.filter(p=>p.status==="Concluída");
 
-    const quantidade=concluidas.reduce((s,p)=>s+p.quantidade,0);
+    const total = producoes.reduce(
 
-    document.getElementById("producaoHoje").textContent=
-        quantidade.toLocaleString("pt-BR");
+        (s,p)=>s + Number(p.quantidade_produzida || 0),
 
-    document.getElementById("ordensConcluidas").textContent=
-        concluidas.length;
+        0
 
-    const eficiencia=((quantidade/10000)*100);
+    );
 
-    document.getElementById("eficiencia").textContent=
-        eficiencia.toFixed(0)+"%";
+
+    document.getElementById("producaoHoje").textContent =
+    total.toLocaleString("pt-BR");
+
+
+
+    document.getElementById("ordensConcluidas").textContent =
+
+    producoes.filter(
+
+        p=>p.status==="Concluída"
+
+    ).length;
+
+
+
+    const media = producoes.length ?
+
+    producoes.reduce(
+
+        (s,p)=>s + calcularProdutividade(p),
+
+        0
+
+    ) / producoes.length
+
+    :0;
+
+
+
+    document.getElementById("eficiencia").textContent =
+
+    media.toFixed(0)+"%";
+
 
 }
+// ======================================================
+// STATUS
+// ======================================================
 
 function classe(status){
 
@@ -99,25 +184,50 @@ function classe(status){
 
 }
 
-function renderizar(lista=producoes){
 
-    tbody.innerHTML="";
+// ======================================================
+// RENDERIZAR TABELA
+// ======================================================
+
+function renderizar(lista = producoes){
+
+    tbody.innerHTML = "";
+
 
     lista.forEach(item=>{
 
-        const tr=document.createElement("tr");
 
-        tr.innerHTML=`
+        const tr = document.createElement("tr");
+
+
+        tr.innerHTML = `
 
         <td>OP-${item.id}</td>
 
         <td>${item.produto}</td>
 
-        <td>${item.maquina}</td>
+        <td>${item.maquina_nome || item.maquina_id}</td>
 
-        <td>${item.quantidade}</td>
+        <td>
 
-        <td>${item.data}</td>
+        ${item.quantidade_produzida}
+
+        </td>
+
+
+        <td>
+
+        ${calcularProdutividade(item).toFixed(0)}%
+
+        </td>
+
+
+        <td>
+
+        ${item.data_producao}
+
+        </td>
+
 
         <td>
 
@@ -129,31 +239,43 @@ function renderizar(lista=producoes){
 
         </td>
 
+
         <td>
 
-            <button
-                class="btn btn-warning editar"
-                data-id="${item.id}">
 
-                <i class="fa-solid fa-pen"></i>
+            <button
+
+            class="btn btn-warning editar"
+
+            data-id="${item.id}">
+
+            <i class="fa-solid fa-pen"></i>
 
             </button>
 
-            <button
-                class="btn btn-danger excluir"
-                data-id="${item.id}">
 
-                <i class="fa-solid fa-trash"></i>
+
+            <button
+
+            class="btn btn-danger excluir"
+
+            data-id="${item.id}">
+
+            <i class="fa-solid fa-trash"></i>
 
             </button>
+
 
         </td>
 
         `;
 
+
         tbody.appendChild(tr);
 
+
     });
+
 
     eventos();
 
@@ -161,122 +283,286 @@ function renderizar(lista=producoes){
 
 }
 
+
+// ======================================================
+// EVENTOS
+// ======================================================
+
 function eventos(){
 
-    document.querySelectorAll(".editar").forEach(btn=>{
 
-        btn.onclick=()=>editar(btn.dataset.id);
+    document.querySelectorAll(".editar")
+
+    .forEach(btn=>{
+
+
+        btn.onclick = ()=>editar(btn.dataset.id);
+
 
     });
 
-    document.querySelectorAll(".excluir").forEach(btn=>{
 
-        btn.onclick=()=>excluir(btn.dataset.id);
+
+    document.querySelectorAll(".excluir")
+
+    .forEach(btn=>{
+
+
+        btn.onclick = ()=>excluir(btn.dataset.id);
+
 
     });
+
 
 }
+
+
+// ======================================================
+// EDITAR
+// ======================================================
 
 function editar(id){
 
-    const p=producoes.find(x=>x.id==id);
 
-    editando=id;
+    const p = producoes.find(
 
-    document.getElementById("tituloModal").textContent="Editar Produção";
+        x=>x.id == id
 
-    produto.value=p.produto;
-    maquina.value=p.maquina;
-    quantidade.value=p.quantidade;
-    data.value=p.data;
-    status.value=p.status;
+    );
+
+
+    editando = id;
+
+
+    document.getElementById("tituloModal").textContent =
+
+    "Editar Produção";
+
+
+
+    produto.value = p.produto;
+
+
+    maquina.value = p.maquina_id;
+
+
+    quantidadeProduzida.value =
+
+    p.quantidade_produzida;
+
+
+
+    quantidadeEsperada.value =
+
+    p.quantidade_esperada;
+
+
+
+    data.value = p.data_producao;
+
+
+    status.value = p.status;
+
+
 
     abrirModal();
 
-}
-
-function excluir(id){
-
-    if(!confirm("Excluir esta produção?")) return;
-
-    producoes=producoes.filter(p=>p.id!=id);
-
-    salvar();
-
-    renderizar();
 
 }
 
-form.addEventListener("submit",(e)=>{
 
-    e.preventDefault();
+// ======================================================
+// EXCLUIR
+// ======================================================
 
-    const obj={
+async function excluir(id){
 
-        id:editando ? Number(editando) : Date.now(),
 
-        produto:produto.value,
+    if(!confirm("Excluir esta produção?"))
 
-        maquina:maquina.value,
+    return;
 
-        quantidade:Number(quantidade.value),
 
-        data:data.value,
 
-        status:status.value
+    await fetch(`${API}/${id}`,{
 
-    };
-
-    if(editando){
-
-        const indice=producoes.findIndex(p=>p.id==editando);
-
-        producoes[indice]=obj;
-
-    }else{
-
-        producoes.push(obj);
-
-    }
-
-    salvar();
-
-    renderizar();
-
-    fecharModal();
-
-});
-
-pesquisa.addEventListener("keyup",filtrar);
-
-filtro.addEventListener("change",filtrar);
-
-function filtrar(){
-
-    const texto=pesquisa.value.toLowerCase();
-
-    const statusFiltro=filtro.value;
-
-    const lista=producoes.filter(p=>{
-
-        const busca=
-
-            p.produto.toLowerCase().includes(texto) ||
-
-            p.maquina.toLowerCase().includes(texto);
-
-        const statusOk=
-
-            statusFiltro==="" ||
-
-            p.status===statusFiltro;
-
-        return busca && statusOk;
+        method:"DELETE"
 
     });
 
-    renderizar(lista);
+
+
+    carregarProducoes();
+
 
 }
 
-renderizar();
+
+// ======================================================
+// SALVAR
+// ======================================================
+
+form.addEventListener("submit", async(e)=>{
+
+
+    e.preventDefault();
+
+
+
+    const obj = {
+
+
+        produto: produto.value,
+
+
+        maquina_id: Number(maquina.value),
+
+
+
+        quantidade_produzida:
+
+        Number(quantidadeProduzida.value),
+
+
+
+        quantidade_esperada:
+
+        Number(quantidadeEsperada.value),
+
+
+
+        data_producao:
+
+        data.value,
+
+
+
+        status:
+
+        status.value
+
+
+    };
+
+
+
+    let url = API;
+
+    let metodo = "POST";
+
+
+
+    if(editando){
+
+
+        url = `${API}/${editando}`;
+
+
+        metodo = "PUT";
+
+
+    }
+
+
+
+    await fetch(url,{
+
+
+        method:metodo,
+
+
+        headers:{
+
+
+            "Content-Type":"application/json"
+
+
+        },
+
+
+        body:JSON.stringify(obj)
+
+
+    });
+
+
+
+    await carregarProducoes();
+
+
+    fecharModal();
+
+
+});
+
+
+// ======================================================
+// FILTROS
+// ======================================================
+
+pesquisa.addEventListener("keyup",filtrar);
+
+
+filtro.addEventListener("change",filtrar);
+
+
+
+function filtrar(){
+
+
+    const texto = pesquisa.value.toLowerCase();
+
+
+    const statusFiltro = filtro.value;
+
+
+
+    const lista = producoes.filter(p=>{
+
+
+        const busca =
+
+
+        p.produto.toLowerCase()
+
+        .includes(texto)
+
+        ||
+
+        String(p.maquina_nome || p.maquina_id)
+
+        .toLowerCase()
+
+        .includes(texto);
+
+
+
+        const statusOk =
+
+
+        statusFiltro === ""
+
+        ||
+
+        p.status === statusFiltro;
+
+
+
+        return busca && statusOk;
+
+
+    });
+
+
+
+    renderizar(lista);
+
+
+}
+
+
+// ======================================================
+// INICIALIZAÇÃO
+// ======================================================
+
+carregarProducoes();
