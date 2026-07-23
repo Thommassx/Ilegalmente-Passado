@@ -1,41 +1,40 @@
-let registros = JSON.parse(localStorage.getItem("sustentabilidade")) || [
-    {
-        id: 1,
-        setor: "Usinagem",
-        tipo: "Energia",
-        quantidade: 520,
-        data: "2026-07-16"
-    },
-    {
-        id: 2,
-        setor: "Montagem",
-        tipo: "Água",
-        quantidade: 1800,
-        data: "2026-07-16"
-    },
-    {
-        id: 3,
-        setor: "Reciclagem",
-        tipo: "Resíduo",
-        quantidade: 120,
-        data: "2026-07-17"
-    }
-];
+let registros = [];
+
+const API = "http://localhost:3000/api/sustentabilidade";
 
 let editando = null;
 
+
 const tbody = document.getElementById("listaSustentabilidade");
+
 const modal = document.getElementById("modal");
+
 const form = document.getElementById("formRegistro");
+
 const pesquisa = document.getElementById("pesquisa");
-const filtro = document.getElementById("filtroTipo");
+
+
+const consumoEnergia = document.getElementById("consumoEnergia");
+
+const consumoAgua = document.getElementById("consumoAgua");
+
+const quantidadeResiduos = document.getElementById("quantidadeResiduos");
+
+const quantidadeReciclada = document.getElementById("quantidadeReciclada");
+
+const data = document.getElementById("data");
+
+
 
 document.getElementById("novoRegistro").onclick = abrirModal;
+
 document.getElementById("cancelar").onclick = fecharModal;
 
-window.onclick = (e) => {
 
-    if (e.target === modal) {
+
+window.onclick = (e)=>{
+
+    if(e.target === modal){
 
         fecharModal();
 
@@ -43,22 +42,54 @@ window.onclick = (e) => {
 
 };
 
-function salvar() {
 
-    localStorage.setItem(
-        "sustentabilidade",
-        JSON.stringify(registros)
-    );
+
+
+// BUSCAR DADOS DO BANCO
+
+async function carregarRegistros(){
+
+    try{
+
+
+        const resposta = await fetch(API);
+
+
+        if(!resposta.ok){
+
+            throw new Error("Erro ao buscar registros.");
+
+        }
+
+
+        registros = await resposta.json();
+
+
+        renderizar();
+
+
+    }catch(erro){
+
+        console.error(erro);
+
+    }
 
 }
 
-function abrirModal() {
+
+
+
+// MODAL
+
+function abrirModal(){
 
     modal.style.display = "flex";
 
 }
 
-function fecharModal() {
+
+
+function fecharModal(){
 
     modal.style.display = "none";
 
@@ -66,203 +97,380 @@ function fecharModal() {
 
     editando = null;
 
-    document.getElementById("tituloModal").textContent =
-        "Novo Registro";
-
-}
-
-function atualizarCards() {
-
-    const energia = registros
-        .filter(r => r.tipo === "Energia")
-        .reduce((s, r) => s + r.quantidade, 0);
-
-    const agua = registros
-        .filter(r => r.tipo === "Água")
-        .reduce((s, r) => s + r.quantidade, 0);
-
-    const residuos = registros
-        .filter(r => r.tipo === "Resíduo")
-        .reduce((s, r) => s + r.quantidade, 0);
-
-    document.getElementById("energiaTotal").textContent =
-        energia.toLocaleString("pt-BR") + " kWh";
-
-    document.getElementById("aguaTotal").textContent =
-        agua.toLocaleString("pt-BR") + " L";
-
-    document.getElementById("residuosTotal").textContent =
-        residuos.toLocaleString("pt-BR") + " kg";
-
-    const taxa = energia === 0
-        ? 0
-        : Math.min(100, Math.round((residuos / energia) * 100));
-
-    document.getElementById("reciclagem").textContent =
-        taxa + "%";
-
-}
-
-function renderizar(lista = registros) {
-
-    tbody.innerHTML = "";
-
-    lista.forEach(registro => {
-
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-
-        <td>${registro.setor}</td>
-
-        <td>${registro.tipo}</td>
-
-        <td>${registro.quantidade}</td>
-
-        <td>${registro.data}</td>
-
-        <td>
-
-            <button
-                class="btn btn-warning editar"
-                data-id="${registro.id}">
-
-                <i class="fa-solid fa-pen"></i>
-
-            </button>
-
-            <button
-                class="btn btn-danger excluir"
-                data-id="${registro.id}">
-
-                <i class="fa-solid fa-trash"></i>
-
-            </button>
-
-        </td>
-
-        `;
-
-        tbody.appendChild(tr);
-
-    });
-
-    adicionarEventos();
-
-    atualizarCards();
-
-}
-
-function adicionarEventos() {
-
-    document.querySelectorAll(".editar").forEach(btn => {
-
-        btn.onclick = () => editar(btn.dataset.id);
-
-    });
-
-    document.querySelectorAll(".excluir").forEach(btn => {
-
-        btn.onclick = () => excluir(btn.dataset.id);
-
-    });
-
-}
-
-function editar(id) {
-
-    const registro = registros.find(r => r.id == id);
-
-    editando = id;
 
     document.getElementById("tituloModal").textContent =
-        "Editar Registro";
-
-    setor.value = registro.setor;
-    tipo.value = registro.tipo;
-    quantidade.value = registro.quantidade;
-    data.value = registro.data;
-
-    abrirModal();
+    "Novo Registro";
 
 }
 
-function excluir(id) {
 
-    if (!confirm("Deseja excluir este registro?")) return;
 
-    registros = registros.filter(r => r.id != id);
 
-    salvar();
 
-    renderizar();
+// CALCULO RECICLAGEM
 
-}
+function calcularReciclagem(){
 
-form.addEventListener("submit", (e) => {
+    const residuos = registros.reduce(
 
-    e.preventDefault();
+        (s,r)=>s + Number(r.quantidade_residuos),
 
-    const registro = {
+        0
 
-        id: editando ? Number(editando) : Date.now(),
+    );
 
-        setor: setor.value,
 
-        tipo: tipo.value,
+    const reciclado = registros.reduce(
 
-        quantidade: Number(quantidade.value),
+        (s,r)=>s + Number(r.quantidade_reciclada),
 
-        data: data.value
+        0
 
-    };
+    );
 
-    if (editando) {
 
-        const indice = registros.findIndex(r => r.id == editando);
+    if(residuos === 0){
 
-        registros[indice] = registro;
-
-    } else {
-
-        registros.push(registro);
+        return 0;
 
     }
 
-    salvar();
 
-    renderizar();
-
-    fecharModal();
-
-});
-
-pesquisa.addEventListener("keyup", filtrar);
-
-filtro.addEventListener("change", filtrar);
-
-function filtrar() {
-
-    const texto = pesquisa.value.toLowerCase();
-
-    const tipoFiltro = filtro.value;
-
-    const lista = registros.filter(registro => {
-
-        const busca = registro.setor
-            .toLowerCase()
-            .includes(texto);
-
-        const tipoOk =
-            tipoFiltro === "" ||
-            registro.tipo === tipoFiltro;
-
-        return busca && tipoOk;
-
-    });
-
-    renderizar(lista);
+    return (reciclado / residuos) * 100;
 
 }
 
-renderizar();
+
+
+
+
+// CARDS
+
+function atualizarCards(){
+
+
+    const energia = registros.reduce(
+
+        (s,r)=>s + Number(r.consumo_energia),
+
+        0
+
+    );
+
+
+    const agua = registros.reduce(
+
+        (s,r)=>s + Number(r.consumo_agua),
+
+        0
+
+    );
+
+
+    const residuos = registros.reduce(
+
+        (s,r)=>s + Number(r.quantidade_residuos),
+
+        0
+
+    );
+
+
+
+    document.getElementById("energiaTotal").textContent =
+
+    energia.toLocaleString("pt-BR") + " kWh";
+
+
+
+    document.getElementById("aguaTotal").textContent =
+
+    agua.toLocaleString("pt-BR") + " L";
+
+
+
+    document.getElementById("residuosTotal").textContent =
+
+    residuos.toLocaleString("pt-BR") + " kg";
+
+
+
+    document.getElementById("reciclagem").textContent =
+
+    calcularReciclagem().toFixed(0) + "%";
+
+
+}
+// RENDERIZAR TABELA
+
+function renderizar(lista = registros){
+
+
+    tbody.innerHTML = "";
+
+
+    lista.forEach(registro=>{
+
+
+        const tr = document.createElement("tr");
+
+
+        tr.innerHTML = `
+
+
+        <td>${registro.consumo_energia} kWh</td>
+
+
+        <td>${registro.consumo_agua} L</td>
+
+
+        <td>${registro.quantidade_residuos} kg</td>
+
+
+        <td>${registro.quantidade_reciclada} kg</td>
+
+
+        <td>${registro.data_registro}</td>
+
+
+
+        <td>
+
+
+            <button
+
+            class="btn btn-danger excluir"
+
+            data-id="${registro.id_sustentabilidade}">
+
+
+            <i class="fa-solid fa-trash"></i>
+
+
+            </button>
+
+
+        </td>
+
+
+        `;
+
+
+        tbody.appendChild(tr);
+
+
+    });
+
+
+
+    eventos();
+
+
+    atualizarCards();
+
+
+}
+
+
+
+
+
+// EVENTOS
+
+function eventos(){
+
+
+    document.querySelectorAll(".excluir")
+
+    .forEach(btn=>{
+
+
+        btn.onclick = ()=>{
+
+            excluir(btn.dataset.id);
+
+        };
+
+
+    });
+
+
+}
+
+
+
+
+
+// EXCLUIR
+
+async function excluir(id){
+
+
+    if(!confirm("Deseja excluir este registro?"))
+
+    return;
+
+
+
+    await fetch(`${API}/${id}`,{
+
+
+        method:"DELETE"
+
+
+    });
+
+
+
+    carregarRegistros();
+
+
+}
+
+
+
+
+
+// SALVAR
+
+form.addEventListener("submit", async(e)=>{
+
+
+    e.preventDefault();
+
+
+
+    const registro = {
+
+
+        consumo_energia:
+
+        Number(consumoEnergia.value),
+
+
+
+        consumo_agua:
+
+        Number(consumoAgua.value),
+
+
+
+        quantidade_residuos:
+
+        Number(quantidadeResiduos.value),
+
+
+
+        quantidade_reciclada:
+
+        Number(quantidadeReciclada.value),
+
+
+
+        data_registro:
+
+        data.value
+
+
+    };
+
+
+
+    let url = API;
+
+    let metodo = "POST";
+
+
+
+    if(editando){
+
+
+        url = `${API}/${editando}`;
+
+        metodo = "PUT";
+
+
+    }
+
+
+
+    await fetch(url,{
+
+
+        method:metodo,
+
+
+        headers:{
+
+
+            "Content-Type":"application/json"
+
+
+        },
+
+
+        body:JSON.stringify(registro)
+
+
+    });
+
+
+
+    await carregarRegistros();
+
+
+    fecharModal();
+
+
+
+});
+
+
+
+
+
+
+
+// PESQUISA
+
+pesquisa.addEventListener("keyup",filtrar);
+
+
+
+function filtrar(){
+
+
+    const texto = pesquisa.value.toLowerCase();
+
+
+
+    const lista = registros.filter(r=>{
+
+
+        return (
+
+            String(r.data_registro)
+
+            .toLowerCase()
+
+            .includes(texto)
+
+        );
+
+
+    });
+
+
+
+    renderizar(lista);
+
+
+}
+
+
+
+
+
+// INICIALIZAÇÃO
+
+carregarRegistros();

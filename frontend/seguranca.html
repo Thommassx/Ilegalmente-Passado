@@ -22,57 +22,99 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
+
 <aside class="sidebar">
+
 
 <div class="logo">
 
+
 <div class="logo-icon">
+
 <i class="fa-solid fa-industry"></i>
+
 </div>
+
 
 <div class="logo-text">
+
 <h2>EcoFactory</h2>
+
 <span>Industrial Manager</span>
-</div>
 
 </div>
+
+
+</div>
+
+
+
 
 <nav class="menu">
 
+
 <a href="index.html">
+
 <i class="fa-solid fa-chart-line"></i>
+
 Dashboard
+
 </a>
+
 
 <a href="maquinas.html">
+
 <i class="fa-solid fa-gears"></i>
+
 Máquinas
+
 </a>
+
 
 <a href="producao.html">
+
 <i class="fa-solid fa-boxes-stacked"></i>
+
 Produção
+
 </a>
+
 
 <a href="sustentabilidade.html">
+
 <i class="fa-solid fa-leaf"></i>
+
 Sustentabilidade
+
 </a>
 
+
 <a href="seguranca.html" class="active">
+
 <i class="fa-solid fa-triangle-exclamation"></i>
+
 Segurança
+
 </a>
+
 
 </nav>
 
+
+
+
+
 <div class="sidebar-footer">
 
+
 <img src="https://i.pravatar.cc/60" alt="">
+
 
 <div>
 
@@ -82,35 +124,61 @@ Segurança
 
 </div>
 
+
 </div>
+
 
 </aside>
 
+
+
+
+
 <main class="content">
+
+
 
 <header class="topbar">
 
+
 <div>
+
 
 <h1>Segurança</h1>
 
-<span>Controle de incidentes e ocorrências na fábrica.</span>
+
+<span>
+Controle de incidentes e ocorrências na fábrica.
+</span>
+
 
 </div>
 
+
+
 <button class="btn btn-primary" id="novaOcorrencia">
+
 
 <i class="fa-solid fa-plus"></i>
 
+
 Nova Ocorrência
+
 
 </button>
 
+
 </header>
+
+
+
+
 
 <section class="cards">
 
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -120,15 +188,22 @@ Nova Ocorrência
 
 </div>
 
+
 <div class="card-icon red">
 
 <i class="fa-solid fa-triangle-exclamation"></i>
 
 </div>
 
+
 </div>
 
+
+
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -138,15 +213,22 @@ Nova Ocorrência
 
 </div>
 
+
 <div class="card-icon green">
 
 <i class="fa-solid fa-circle-check"></i>
 
 </div>
 
+
 </div>
 
+
+
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -156,15 +238,22 @@ Nova Ocorrência
 
 </div>
 
+
 <div class="card-icon yellow">
 
 <i class="fa-solid fa-shield-halved"></i>
 
 </div>
 
+
 </div>
 
+
+
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -174,92 +263,142 @@ Nova Ocorrência
 
 </div>
 
+
 <div class="card-icon red">
 
 <i class="fa-solid fa-radiation"></i>
 
 </div>
 
+
 </div>
 
-</section>
 
+</section>
 <div class="panel">
+
 
 <div class="grid-2">
 
+
 <div class="form-group">
+
 
 <label>Pesquisar</label>
 
+
 <input
+
 type="text"
+
 id="pesquisa"
-placeholder="Funcionário ou Local">
+
+placeholder="Digite o local ou ocorrência">
+
 
 </div>
+
+
+
 
 <div class="form-group">
 
-<label>Nível</label>
+
+<label>Nível de risco</label>
+
 
 <select id="filtroNivel">
 
+
 <option value="">Todos</option>
 
-<option>Baixo</option>
+<option value="Baixo">Baixo</option>
 
-<option>Médio</option>
+<option value="Médio">Médio</option>
 
-<option>Alto</option>
+<option value="Alto">Alto</option>
+
+<option value="Crítico">Crítico</option>
+
 
 </select>
 
-</div>
 
 </div>
 
+
+
 </div>
+
+
+</div>
+
+
+
+
 
 <div class="panel mt-20">
 
+
 <table>
+
 
 <thead>
 
+
 <tr>
 
-<th>Funcionário</th>
+
+<th>Tipo</th>
 
 <th>Local</th>
-
-<th>Ocorrência</th>
 
 <th>Nível</th>
 
 <th>Data</th>
 
+<th>Descrição</th>
+
 <th>Ações</th>
+
 
 </tr>
 
+
 </thead>
+
+
+
 
 <tbody id="listaOcorrencias">
 
+
 </tbody>
+
+
 
 </table>
 
+
 </div>
+
+
 
 </main>
 
+
 </div>
+
+
+
+
+
 
 <div class="modal" id="modal">
 
+
 <div class="modal-content">
+
 
 <h2 id="tituloModal">
 
@@ -267,88 +406,254 @@ Nova Ocorrência
 
 </h2>
 
+
+
+
+
 <form id="formOcorrencia">
+
+
+
+
 
 <div class="grid-2">
 
+
+
 <div class="form-group">
 
-<label>Funcionário</label>
 
-<input id="funcionario" required>
+<label>Tipo da Ocorrência</label>
+
+
+<input
+
+id="tipo_ocorrencia"
+
+required>
+
 
 </div>
 
+
+
+
 <div class="form-group">
+
 
 <label>Local</label>
 
-<input id="local" required>
+
+<input
+
+id="local"
+
+required>
+
 
 </div>
 
-</div>
 
-<div class="form-group">
-
-<label>Descrição</label>
-
-<textarea id="descricao" required></textarea>
 
 </div>
+
+
+
+
+
 
 <div class="grid-2">
 
+
+
 <div class="form-group">
 
-<label>Nível</label>
 
-<select id="nivel">
+<label>Nível de Risco</label>
 
-<option>Baixo</option>
 
-<option>Médio</option>
+<select id="nivel_risco">
 
-<option>Alto</option>
+
+<option value="Baixo">
+
+Baixo
+
+</option>
+
+
+<option value="Médio">
+
+Médio
+
+</option>
+
+
+<option value="Alto">
+
+Alto
+
+</option>
+
+
+<option value="Crítico">
+
+Crítico
+
+</option>
+
 
 </select>
 
+
 </div>
+
+
+
+
 
 <div class="form-group">
 
+
 <label>Data</label>
 
-<input type="date" id="data" required>
+
+<input
+
+type="date"
+
+id="data_ocorrencia"
+
+required>
+
 
 </div>
 
+
+
 </div>
 
-<div style="display:flex;justify-content:flex-end;gap:15px;margin-top:20px;">
 
-<button type="button" class="btn btn-danger" id="cancelar">
+
+
+
+
+<div class="form-group">
+
+
+<label>Descrição</label>
+
+
+<textarea
+
+id="descricao"
+
+required>
+
+</textarea>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label>Medida Preventiva</label>
+
+
+<textarea
+
+id="medida_preventiva"
+
+required>
+
+</textarea>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div
+
+style="display:flex;justify-content:flex-end;gap:15px;margin-top:20px;">
+
+
+
+
+
+<button
+
+type="button"
+
+class="btn btn-danger"
+
+id="cancelar">
+
 
 Cancelar
 
+
 </button>
 
-<button class="btn btn-success">
+
+
+
+
+
+<button
+
+class="btn btn-success">
+
 
 Salvar
 
+
 </button>
 
+
+
+
+
 </div>
+
+
+
+
+
 
 </form>
 
-</div>
+
+
+
 
 </div>
+
+
+</div>
+
+
+
+
+
 
 <script src="js/seguranca.js"></script>
 
+
+
 </body>
+
 
 </html>

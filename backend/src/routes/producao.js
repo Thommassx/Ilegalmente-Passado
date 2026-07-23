@@ -6,115 +6,305 @@ const db = require("../database");
 
 
 // LISTAR PRODUÇÕES
-router.get("/", async (req, res) => {
+router.get("/", (req,res)=>{
 
-    try {
 
-        const [producoes] = await db.query(
-            "SELECT * FROM producao"
-        );
+    const sql = `
 
-        res.json(producoes);
+        SELECT
 
-    } catch (erro) {
+            p.*,
 
-        console.error(erro);
+            m.nome AS maquina_nome
 
-        res.status(500).json({
-            erro: "Erro ao buscar produções"
-        });
+        FROM producao p
 
-    }
+        INNER JOIN maquina m
+
+        ON p.maquina_id = m.id_maquina
+
+    `;
+
+
+    db.query(sql,(err,resultado)=>{
+
+
+        if(err){
+
+            return res.status(500).json({
+                erro:err
+            });
+
+        }
+
+
+        res.json(resultado);
+
+
+    });
+
 
 });
+
 
 
 // CADASTRAR PRODUÇÃO
-router.post("/", async (req, res) => {
+router.post("/",(req,res)=>{
 
-    try {
 
-        const {
+    const {
+
+        produto,
+
+        quantidade_produzida,
+
+        quantidade_esperada,
+
+        data_producao,
+
+        maquina_id,
+
+        status
+
+
+    } = req.body;
+
+
+
+    const sql = `
+
+        INSERT INTO producao
+
+        (
+
             produto,
+
             quantidade_produzida,
+
             quantidade_esperada,
+
             data_producao,
+
             maquina_id,
+
             status
-        } = req.body;
+
+        )
+
+        VALUES (?,?,?,?,?,?)
+
+    `;
 
 
-        const [resultado] = await db.query(
 
-            `INSERT INTO producao
-            (
-                produto,
-                quantidade_produzida,
-                quantidade_esperada,
-                data_producao,
-                maquina_id,
-                status
-            )
-            VALUES (?, ?, ?, ?, ?, ?)`,
+    db.query(
 
-            [
-                produto,
-                quantidade_produzida,
-                quantidade_esperada,
-                data_producao,
-                maquina_id,
-                status
-            ]
+        sql,
 
-        );
+        [
+
+            produto,
+
+            quantidade_produzida,
+
+            quantidade_esperada,
+
+            data_producao,
+
+            maquina_id,
+
+            status
+
+        ],
 
 
-        res.json({
-            mensagem: "Produção cadastrada",
-            id: resultado.insertId
-        });
+        (err,resultado)=>{
 
 
-    } catch (erro) {
+            if(err){
 
-        console.error(erro);
+                return res.status(500).json({
+                    erro:err
+                });
 
-        res.status(500).json({
-            erro: "Erro ao cadastrar produção"
-        });
+            }
 
-    }
+
+
+            res.status(201).json({
+
+                mensagem:"Produção cadastrada!",
+
+                id:resultado.insertId
+
+            });
+
+
+        }
+
+
+    );
+
 
 });
+
+
+
+
+// ATUALIZAR PRODUÇÃO
+router.put("/:id",(req,res)=>{
+
+
+    const id = req.params.id;
+
+
+    const {
+
+        produto,
+
+        quantidade_produzida,
+
+        quantidade_esperada,
+
+        data_producao,
+
+        maquina_id,
+
+        status
+
+
+    } = req.body;
+
+
+
+    const sql = `
+
+        UPDATE producao SET
+
+            produto = ?,
+
+            quantidade_produzida = ?,
+
+            quantidade_esperada = ?,
+
+            data_producao = ?,
+
+            maquina_id = ?,
+
+            status = ?
+
+        WHERE id_producao = ?
+
+    `;
+
+
+
+    db.query(
+
+        sql,
+
+        [
+
+            produto,
+
+            quantidade_produzida,
+
+            quantidade_esperada,
+
+            data_producao,
+
+            maquina_id,
+
+            status,
+
+            id
+
+        ],
+
+
+        (err,resultado)=>{
+
+
+            if(err){
+
+                return res.status(500).json({
+                    erro:err
+                });
+
+            }
+
+
+            res.json({
+
+                mensagem:"Produção atualizada!"
+
+            });
+
+
+        }
+
+
+    );
+
+
+});
+
+
 
 
 // EXCLUIR PRODUÇÃO
-router.delete("/:id", async (req,res)=>{
-
-    try{
-
-        await db.query(
-            "DELETE FROM producao WHERE id = ?",
-            [req.params.id]
-        );
+router.delete("/:id",(req,res)=>{
 
 
-        res.json({
-            mensagem:"Produção removida"
-        });
+    const id = req.params.id;
 
 
-    }catch(erro){
 
-        console.error(erro);
+    const sql = `
 
-        res.status(500).json({
-            erro:"Erro ao excluir"
-        });
+        DELETE FROM producao
 
-    }
+        WHERE id_producao = ?
+
+    `;
+
+
+
+    db.query(
+
+        sql,
+
+        [id],
+
+
+        (err,resultado)=>{
+
+
+            if(err){
+
+                return res.status(500).json({
+                    erro:err
+                });
+
+            }
+
+
+
+            res.json({
+
+                mensagem:"Produção removida!"
+
+            });
+
+
+        }
+
+
+    );
+
 
 });
+
 
 
 module.exports = router;

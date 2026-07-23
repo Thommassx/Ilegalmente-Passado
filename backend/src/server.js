@@ -14,8 +14,13 @@ app.get("/", (req,res)=>{
 
 const maquinasRoutes = require("./routes/maquinas");
 const producaoRoutes = require("./routes/producao");
+const sustentabilidadeRoutes = require("./routes/sustentabilidade");
+const segurancaRoutes = require("./routes/seguranca");
+const dashboardRoutes = require("./routes/dashboard");
 
-
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/seguranca", segurancaRoutes);
+app.use("/api/sustentabilidade", sustentabilidadeRoutes);
 app.use("/api/maquinas", maquinasRoutes);
 app.use("/api/producao", producaoRoutes);
 

@@ -1,389 +1,652 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoFactory | Dashboard</title>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="css/style.css">
+<title>EcoFactory | Dashboard</title>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+<link rel="stylesheet" href="css/style.css">
+
+
 </head>
+
+
 <body>
+
 
 <div class="container">
 
-    <!-- SIDEBAR -->
 
-    <aside class="sidebar">
 
-        <div class="logo">
+<aside class="sidebar">
 
-            <div class="logo-icon">
-                <i class="fa-solid fa-industry"></i>
-            </div>
 
-            <div class="logo-text">
-                <h2>EcoFactory</h2>
-                <span>Industrial Manager</span>
-            </div>
 
-        </div>
+<div class="logo">
 
-        <nav class="menu">
 
-            <a href="index.html" class="active">
-                <i class="fa-solid fa-chart-line"></i>
-                Dashboard
-            </a>
+<div class="logo-icon">
 
-            <a href="maquinas.html">
-                <i class="fa-solid fa-gears"></i>
-                Máquinas
-            </a>
-
-            <a href="producao.html">
-                <i class="fa-solid fa-boxes-stacked"></i>
-                Produção
-            </a>
-
-            <a href="sustentabilidade.html">
-                <i class="fa-solid fa-leaf"></i>
-                Sustentabilidade
-            </a>
-
-            <a href="seguranca.html">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                Segurança
-            </a>
-
-        </nav>
-
-        <div class="sidebar-footer">
-
-            <img src="https://i.pravatar.cc/60" alt="">
-
-            <div>
-
-                <strong>Administrador</strong>
-
-                <p>admin@ecofactory.com</p>
-
-            </div>
-
-        </div>
-
-    </aside>
-
-    <!-- MAIN -->
-
-    <main class="content">
-
-        <!-- NAVBAR -->
-
-        <header class="topbar">
-
-            <div>
-
-                <h1>Dashboard</h1>
-
-                <span>
-                    Bem-vindo ao sistema EcoFactory
-                </span>
-
-            </div>
-
-            <div class="top-actions">
-
-                <button class="notification">
-
-                    <i class="fa-solid fa-bell"></i>
-
-                    <span class="badge">4</span>
-
-                </button>
-
-                <button class="profile">
-
-                    <i class="fa-solid fa-user"></i>
-
-                </button>
-
-            </div>
-
-        </header>
-
-        <!-- CARDS -->
-
-        <section class="cards">
-
-            <div class="card">
-
-                <div class="card-info">
-
-                    <span>Máquinas Ativas</span>
-
-                    <h2 id="maquinasAtivas">18</h2>
-
-                </div>
-
-                <div class="card-icon blue">
-
-                    <i class="fa-solid fa-gears"></i>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <div class="card-info">
-
-                    <span>Produção Hoje</span>
-
-                    <h2 id="producaoHoje">8.540</h2>
-
-                </div>
-
-                <div class="card-icon green">
-
-                    <i class="fa-solid fa-boxes-stacked"></i>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <div class="card-info">
-
-                    <span>Energia</span>
-
-                    <h2 id="energia">620 kWh</h2>
-
-                </div>
-
-                <div class="card-icon yellow">
-
-                    <i class="fa-solid fa-bolt"></i>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <div class="card-info">
-
-                    <span>Ocorrências</span>
-
-                    <h2 id="ocorrencias">2</h2>
-
-                </div>
-
-                <div class="card-icon red">
-
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- DASHBOARD -->
-
-        <section class="dashboard">
-
-            <div class="left">
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <h2>Produção Semanal</h2>
-
-                    </div>
-
-                    <canvas id="graficoProducao"></canvas>
-
-                </div>
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <h2>Status das Máquinas</h2>
-
-                    </div>
-
-                    <table>
-
-                        <thead>
-
-                        <tr>
-
-                            <th>Máquina</th>
-                            <th>Setor</th>
-                            <th>Status</th>
-
-                        </tr>
-
-                        </thead>
-
-                        <tbody id="tabelaMaquinas">
-
-                            <tr>
-
-                                <td>CNC-01</td>
-
-                                <td>Usinagem</td>
-
-                                <td>
-                                    <span class="status ativo">
-                                        Em operação
-                                    </span>
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>Prensa-03</td>
-
-                                <td>Montagem</td>
-
-                                <td>
-                                    <span class="status manutencao">
-                                        Manutenção
-                                    </span>
-                                </td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>Solda-05</td>
-
-                                <td>Soldagem</td>
-
-                                <td>
-                                    <span class="status parado">
-                                        Parada
-                                    </span>
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-            <div class="right">
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <h2>Indicadores</h2>
-
-                    </div>
-
-                    <div class="indicator">
-
-                        <span>Produtividade</span>
-
-                        <strong>87%</strong>
-
-                    </div>
-
-                    <div class="progress">
-
-                        <div style="width:87%"></div>
-
-                    </div>
-
-                    <div class="indicator">
-
-                        <span>Reciclagem</span>
-
-                        <strong>72%</strong>
-
-                    </div>
-
-                    <div class="progress">
-
-                        <div style="width:72%"></div>
-
-                    </div>
-
-                    <div class="indicator">
-
-                        <span>Consumo de Água</span>
-
-                        <strong>64%</strong>
-
-                    </div>
-
-                    <div class="progress">
-
-                        <div style="width:64%"></div>
-
-                    </div>
-
-                </div>
-
-                <div class="panel">
-
-                    <div class="panel-header">
-
-                        <h2>Atividades Recentes</h2>
-
-                    </div>
-
-                    <ul class="timeline">
-
-                        <li>
-                            Máquina CNC-01 iniciou produção.
-                        </li>
-
-                        <li>
-                            Nova ocorrência registrada.
-                        </li>
-
-                        <li>
-                            Relatório diário gerado.
-                        </li>
-
-                        <li>
-                            Produção atingiu a meta.
-                        </li>
-
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
+<i class="fa-solid fa-industry"></i>
 
 </div>
 
+
+
+<div class="logo-text">
+
+<h2>EcoFactory</h2>
+
+<span>Industrial Manager</span>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<nav class="menu">
+
+
+
+<a href="index.html" class="active">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Dashboard
+
+</a>
+
+
+
+
+<a href="maquinas.html">
+
+<i class="fa-solid fa-gears"></i>
+
+Máquinas
+
+</a>
+
+
+
+
+<a href="producao.html">
+
+<i class="fa-solid fa-boxes-stacked"></i>
+
+Produção
+
+</a>
+
+
+
+
+<a href="sustentabilidade.html">
+
+<i class="fa-solid fa-leaf"></i>
+
+Sustentabilidade
+
+</a>
+
+
+
+
+<a href="seguranca.html">
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+Segurança
+
+</a>
+
+
+
+</nav>
+
+
+
+
+
+<div class="sidebar-footer">
+
+
+<img src="https://i.pravatar.cc/60" alt="">
+
+
+<div>
+
+
+<strong>Administrador</strong>
+
+
+<p>admin@ecofactory.com</p>
+
+
+</div>
+
+
+</div>
+
+
+
+</aside>
+
+
+
+
+
+
+<main class="content">
+
+
+
+
+
+<header class="topbar">
+
+
+
+<div>
+
+
+<h1>Dashboard</h1>
+
+
+<span>
+
+Bem-vindo ao sistema EcoFactory
+
+</span>
+
+
+</div>
+
+
+
+
+
+<div class="top-actions">
+
+
+
+<button class="notification">
+
+
+<i class="fa-solid fa-bell"></i>
+
+
+<span class="badge">4</span>
+
+
+</button>
+
+
+
+
+<button class="profile">
+
+
+<i class="fa-solid fa-user"></i>
+
+
+</button>
+
+
+
+</div>
+
+
+
+</header>
+
+
+
+
+
+
+
+
+<section class="cards">
+
+
+
+
+
+<div class="card">
+
+
+<div class="card-info">
+
+
+<span>Máquinas Ativas</span>
+
+
+<h2 id="maquinasAtivas">0</h2>
+
+
+</div>
+
+
+
+<div class="card-icon blue">
+
+
+<i class="fa-solid fa-gears"></i>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<div class="card-info">
+
+
+<span>Produção Hoje</span>
+
+
+<h2 id="producaoHoje">0</h2>
+
+
+</div>
+
+
+
+<div class="card-icon green">
+
+
+<i class="fa-solid fa-boxes-stacked"></i>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<div class="card-info">
+
+
+<span>Energia</span>
+
+
+<h2 id="energia">0 kWh</h2>
+
+
+</div>
+
+
+
+<div class="card-icon yellow">
+
+
+<i class="fa-solid fa-bolt"></i>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="card">
+
+
+<div class="card-info">
+
+
+<span>Ocorrências</span>
+
+
+<h2 id="ocorrencias">0</h2>
+
+
+</div>
+
+
+
+<div class="card-icon red">
+
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+</section>
+<section class="dashboard">
+
+
+<div class="left">
+
+
+
+
+
+<div class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>Produção Semanal</h2>
+
+
+</div>
+
+
+<canvas id="graficoProducao"></canvas>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>Status das Máquinas</h2>
+
+
+</div>
+
+
+
+
+
+<table>
+
+
+
+<thead>
+
+
+<tr>
+
+<th>Máquina</th>
+
+<th>Setor</th>
+
+<th>Status</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody id="tabelaMaquinas">
+
+
+
+</tbody>
+
+
+
+
+
+</table>
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="right">
+
+
+
+
+
+
+<div class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>Indicadores</h2>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="indicator">
+
+
+<span>Produtividade</span>
+
+
+<strong id="produtividade">0%</strong>
+
+
+</div>
+
+
+
+<div class="progress">
+
+
+<div id="barraProdutividade" style="width:0%"></div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="indicator">
+
+
+<span>Reciclagem</span>
+
+
+<strong id="reciclagem">0%</strong>
+
+
+</div>
+
+
+
+<div class="progress">
+
+
+<div id="barraReciclagem" style="width:0%"></div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="indicator">
+
+
+<span>Consumo de Água</span>
+
+
+<strong id="consumoAgua">0%</strong>
+
+
+</div>
+
+
+
+<div class="progress">
+
+
+<div id="barraAgua" style="width:0%"></div>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="panel">
+
+
+<div class="panel-header">
+
+
+<h2>Atividades Recentes</h2>
+
+
+</div>
+
+
+
+
+
+<ul class="timeline" id="atividadesRecentes">
+
+
+
+</ul>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+</main>
+
+
+
+
+</div>
+
+
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <script src="js/app.js"></script>
 
+
+
 </body>
+
+
 </html>

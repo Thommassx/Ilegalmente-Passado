@@ -1,47 +1,46 @@
 // ======================================================
-// ECOFACTORY - DASHBOARD
+// ECOFACTORY - DASHBOARD REAL
 // ======================================================
 
-const API = "http://localhost:3000/api/maquinas";
+const API = "http://localhost:3000/api/dashboard";
 
 let graficoProducao;
 
-const dashboard = {
-
-    maquinasAtivas: 0,
-
-    producaoHoje: 0,
-
-    energia: 0,
-
-    ocorrencias: 0
-
-};
-
 
 // ======================================================
-// GRÁFICO DE PRODUÇÃO
+// GRÁFICO
 // ======================================================
 
-function criarGraficoProducao(valores = []) {
+function criarGraficoProducao(valores = []){
+
 
     const ctx = document.getElementById("graficoProducao");
 
-    if (!ctx) return;
 
-    if (graficoProducao) {
+    if(!ctx) return;
+
+
+
+    if(graficoProducao){
 
         graficoProducao.destroy();
 
     }
 
-    graficoProducao = new Chart(ctx, {
 
-        type: "line",
 
-        data: {
 
-            labels: [
+    graficoProducao = new Chart(ctx,{
+
+
+        type:"line",
+
+
+        data:{
+
+
+            labels:[
+
                 "Seg",
                 "Ter",
                 "Qua",
@@ -49,342 +48,498 @@ function criarGraficoProducao(valores = []) {
                 "Sex",
                 "Sáb",
                 "Dom"
+
             ],
 
-            datasets: [{
 
-                label: "Produção",
+
+            datasets:[{
+
+
+                label:"Produção",
+
 
                 data: valores.length ? valores : [
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0
+
+                    0,0,0,0,0,0,0
+
                 ],
 
-                borderColor: "#2563eb",
 
-                backgroundColor: "rgba(37,99,235,.15)",
 
-                borderWidth: 3,
+                borderWidth:3,
 
-                fill: true,
 
-                tension: .35,
+                fill:true,
 
-                pointRadius: 5,
 
-                pointHoverRadius: 7
+                tension:.35
+
+
 
             }]
 
+
+
         },
 
-        options: {
 
-            responsive: true,
 
-            maintainAspectRatio: false,
+        options:{
 
-            plugins: {
 
-                legend: {
+            responsive:true,
 
-                    display: false
 
-                }
+            maintainAspectRatio:false,
 
-            },
 
-            scales: {
 
-                y: {
+            plugins:{
 
-                    beginAtZero: true,
 
-                    grid: {
+                legend:{
 
-                        color: "#ececec"
 
-                    }
+                    display:false
 
-                },
-
-                x: {
-
-                    grid: {
-
-                        display: false
-
-                    }
 
                 }
+
 
             }
 
+
         }
+
 
     });
 
-}
-
-
-// ======================================================
-// ATUALIZA OS CARDS
-// ======================================================
-
-function atualizarDashboard() {
-
-    const maquinasAtivas =
-        document.getElementById("maquinasAtivas");
-
-    const producaoHoje =
-        document.getElementById("producaoHoje");
-
-    const energia =
-        document.getElementById("energia");
-
-    const ocorrencias =
-        document.getElementById("ocorrencias");
-
-
-    if (maquinasAtivas) {
-
-        maquinasAtivas.textContent =
-            dashboard.maquinasAtivas;
-
-    }
-
-
-    if (producaoHoje) {
-
-        producaoHoje.textContent =
-            dashboard.producaoHoje.toLocaleString("pt-BR");
-
-    }
-
-
-    if (energia) {
-
-        energia.textContent =
-            dashboard.energia + " kWh";
-
-    }
-
-
-    if (ocorrencias) {
-
-        ocorrencias.textContent =
-            dashboard.ocorrencias;
-
-    }
 
 }
 
 
+
+
+
+
+
 // ======================================================
-// BUSCA DADOS DA API
+// CARDS
 // ======================================================
 
-async function carregarDashboard() {
 
-    try {
+function atualizarCards(dados){
+
+
+
+    document.getElementById("maquinasAtivas").textContent =
+
+    dados.maquinasAtivas;
+
+
+
+    document.getElementById("producaoHoje").textContent =
+
+    dados.producaoHoje.toLocaleString("pt-BR");
+
+
+
+    document.getElementById("energia").textContent =
+
+    dados.energia + " kWh";
+
+
+
+    document.getElementById("ocorrencias").textContent =
+
+    dados.ocorrencias;
+
+
+
+}
+
+
+
+
+
+
+
+
+// ======================================================
+// INDICADORES
+// ======================================================
+
+
+function atualizarIndicadores(dados){
+
+
+
+    document.getElementById("produtividade").textContent =
+
+    dados.produtividade + "%";
+
+
+
+    document.getElementById("barraProdutividade").style.width =
+
+    dados.produtividade + "%";
+
+
+
+
+
+
+    document.getElementById("consumoAgua").textContent =
+
+    dados.agua + " L";
+
+
+
+    document.getElementById("barraAgua").style.width =
+
+    Math.min(dados.agua / 100,100) + "%";
+
+
+
+
+
+
+    document.getElementById("reciclagem").textContent =
+
+    dados.reciclagem + "%";
+
+
+
+    document.getElementById("barraReciclagem").style.width =
+
+    dados.reciclagem + "%";
+
+
+
+}
+// ======================================================
+// TABELA DE MÁQUINAS
+// ======================================================
+
+function atualizarMaquinas(maquinas){
+
+
+    const tabela = document.getElementById("tabelaMaquinas");
+
+
+    if(!tabela) return;
+
+
+
+    tabela.innerHTML = "";
+
+
+
+    maquinas.forEach(maquina=>{
+
+
+        const tr = document.createElement("tr");
+
+
+
+        let classe = "parado";
+
+
+        if(maquina.status === "Em operação"){
+
+            classe = "ativo";
+
+        }
+
+
+        if(maquina.status === "Manutenção"){
+
+            classe = "manutencao";
+
+        }
+
+
+
+
+        tr.innerHTML = `
+
+
+        <td>${maquina.nome}</td>
+
+
+        <td>${maquina.setor}</td>
+
+
+        <td>
+
+
+        <span class="status ${classe}">
+
+        ${maquina.status}
+
+        </span>
+
+
+        </td>
+
+
+        `;
+
+
+
+        tabela.appendChild(tr);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+// ======================================================
+// ATIVIDADES RECENTES
+// ======================================================
+
+
+function atualizarAtividades(dados){
+
+
+    const lista = document.getElementById("atividadesRecentes");
+
+
+    if(!lista) return;
+
+
+
+    lista.innerHTML = "";
+
+
+
+
+
+    const atividades = [];
+
+
+
+
+
+    dados.producao.slice(-3).forEach(p=>{
+
+
+        atividades.push(
+
+        `Produção registrada: ${p.produto}`
+
+        );
+
+
+    });
+
+
+
+
+
+    dados.seguranca.slice(-2).forEach(s=>{
+
+
+        atividades.push(
+
+        `Ocorrência: ${s.tipo_ocorrencia}`
+
+        );
+
+
+    });
+
+
+
+
+
+
+    dados.maquinas.slice(0,2).forEach(m=>{
+
+
+        atividades.push(
+
+        `Máquina ${m.nome}: ${m.status}`
+
+        );
+
+
+    });
+
+
+
+
+
+
+
+    atividades.slice(0,5).forEach(texto=>{
+
+
+        const li = document.createElement("li");
+
+
+        li.textContent = texto;
+
+
+        lista.appendChild(li);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+
+// ======================================================
+// BUSCAR DASHBOARD
+// ======================================================
+
+
+async function carregarDashboard(){
+
+
+    try{
+
 
         const resposta = await fetch(API);
 
 
-        if (!resposta.ok) {
 
-            throw new Error("Erro ao buscar máquinas.");
+        if(!resposta.ok){
+
+
+            throw new Error(
+
+            "Erro ao carregar dashboard"
+
+            );
+
 
         }
 
 
-        const maquinas = await resposta.json();
 
 
-        dashboard.maquinasAtivas =
-            maquinas.filter(
-                maquina => maquina.status === "Em operação"
-            ).length;
+
+        const dados = await resposta.json();
 
 
-        dashboard.energia =
-            maquinas.reduce(
-                (total, maquina) =>
-                    total + Number(maquina.energia || 0),
-                0
+
+
+
+        atualizarCards(dados);
+
+
+        atualizarIndicadores(dados);
+
+
+        atualizarMaquinas(dados.maquinas);
+
+
+        atualizarAtividades(dados);
+
+
+
+
+
+
+
+        const valoresGrafico = dados.producao.map(p=>{
+
+
+            return Number(
+
+            p.quantidade_produzida || 0
+
             );
 
 
-        dashboard.ocorrencias =
-            maquinas.filter(
-                maquina => maquina.status === "Manutenção"
-            ).length;
+        });
 
 
-        dashboard.producaoHoje =
-            maquinas.reduce(
-                (total, maquina) =>
-                    total + Number(maquina.producao || 0),
-                0
-            );
 
 
-        atualizarDashboard();
+        criarGraficoProducao(valoresGrafico);
 
 
-        criarGraficoProducao(
-            maquinas.map(maquina =>
-                Number(maquina.producao || 0)
-            )
-        );
 
+    }catch(erro){
 
-    }
-
-    catch (erro) {
 
         console.error(erro);
 
+
     }
 
+
 }
+
+
+
+
+
+
+
 // ======================================================
 // RELÓGIO
 // ======================================================
 
-function atualizarHora() {
+
+function atualizarHora(){
+
 
     const agora = new Date();
 
+
     document.title =
-        `EcoFactory | ${agora.toLocaleTimeString("pt-BR")}`;
+
+    `EcoFactory | ${agora.toLocaleTimeString("pt-BR")}`;
+
 
 }
 
 
-setInterval(atualizarHora, 1000);
+
+setInterval(atualizarHora,1000);
 
 atualizarHora();
 
 
-// ======================================================
-// NOTIFICAÇÕES
-// ======================================================
-
-const notification = document.querySelector(".notification");
 
 
-if (notification) {
 
-    notification.addEventListener("click", () => {
-
-        alert(`Notificações
-
-• Produção diária concluída
-
-• Nova manutenção registrada
-
-• Relatório disponível
-
-• Meta de produção atingida`);
-
-    });
-
-}
-
-
-// ======================================================
-// PERFIL
-// ======================================================
-
-const profile = document.querySelector(".profile");
-
-
-if (profile) {
-
-    profile.addEventListener("click", () => {
-
-        alert("Administrador\nEcoFactory");
-
-    });
-
-}
-
-
-// ======================================================
-// ANIMAÇÃO DAS BARRAS
-// ======================================================
-
-document.querySelectorAll(".progress div").forEach(bar => {
-
-    const largura = bar.style.width;
-
-    bar.style.width = "0";
-
-
-    setTimeout(() => {
-
-        bar.style.width = largura;
-
-        bar.style.transition = "1.2s";
-
-    }, 300);
-
-});
-
-
-// ======================================================
-// ANIMAÇÃO DOS CARDS
-// ======================================================
-
-document.querySelectorAll(".card").forEach((card, index) => {
-
-    card.style.opacity = "0";
-
-    card.style.transform = "translateY(25px)";
-
-
-    setTimeout(() => {
-
-        card.style.opacity = "1";
-
-        card.style.transform = "translateY(0)";
-
-        card.style.transition = ".5s";
-
-    }, index * 150);
-
-});
-
-
-// ======================================================
-// DARK MODE
-// ======================================================
-
-document.addEventListener("keydown", (e) => {
-
-    if (e.key.toLowerCase() === "d") {
-
-        document.body.classList.toggle("dark");
-
-    }
-
-});
 
 
 // ======================================================
 // INICIALIZAÇÃO
 // ======================================================
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("EcoFactory iniciado.");
+document.addEventListener("DOMContentLoaded",()=>{
+
+
+    console.log("EcoFactory iniciado");
+
 
     carregarDashboard();
+
+
 
 });

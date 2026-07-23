@@ -1,6 +1,7 @@
 let producoes = [];
 
 const API = "http://localhost:3000/api/producao";
+const API_MAQUINAS = "http://localhost:3000/api/maquinas";
 
 let editando = null;
 
@@ -32,6 +33,45 @@ window.onclick = (e)=>{
     }
 
 };
+
+
+// ======================================================
+// CARREGAR MÁQUINAS NO SELECT
+// ======================================================
+
+async function carregarMaquinas(){
+
+    try{
+
+        const resposta = await fetch(API_MAQUINAS);
+
+        const maquinas = await resposta.json();
+
+
+        maquina.innerHTML = 
+        `<option value="">Selecione uma máquina</option>`;
+
+
+        maquinas.forEach(m=>{
+
+            maquina.innerHTML += `
+
+                <option value="${m.id_maquina}">
+                    ${m.nome}
+                </option>
+
+            `;
+
+        });
+
+
+    }catch(erro){
+
+        console.error("Erro ao carregar máquinas:", erro);
+
+    }
+
+}
 
 
 // ======================================================
@@ -117,14 +157,11 @@ function calcularProdutividade(item){
     ) * 100;
 
 }
-
-
 // ======================================================
 // CARDS
 // ======================================================
 
 function atualizarCards(){
-
 
     const total = producoes.reduce(
 
@@ -168,8 +205,9 @@ function atualizarCards(){
 
     media.toFixed(0)+"%";
 
-
 }
+
+
 // ======================================================
 // STATUS
 // ======================================================
@@ -186,7 +224,7 @@ function classe(status){
 
 
 // ======================================================
-// RENDERIZAR TABELA
+// RENDERIZAR
 // ======================================================
 
 function renderizar(lista = producoes){
@@ -202,30 +240,24 @@ function renderizar(lista = producoes){
 
         tr.innerHTML = `
 
-        <td>OP-${item.id}</td>
+        <td>OP-${item.id_producao}</td>
 
         <td>${item.produto}</td>
 
         <td>${item.maquina_nome || item.maquina_id}</td>
 
         <td>
-
-        ${item.quantidade_produzida}
-
+            ${item.quantidade_produzida}
         </td>
 
 
         <td>
-
-        ${calcularProdutividade(item).toFixed(0)}%
-
+            ${calcularProdutividade(item).toFixed(0)}%
         </td>
 
 
         <td>
-
-        ${item.data_producao}
-
+            ${item.data_producao}
         </td>
 
 
@@ -242,29 +274,22 @@ function renderizar(lista = producoes){
 
         <td>
 
-
             <button
-
             class="btn btn-warning editar"
-
-            data-id="${item.id}">
+            data-id="${item.id_producao}">
 
             <i class="fa-solid fa-pen"></i>
 
             </button>
 
 
-
             <button
-
             class="btn btn-danger excluir"
-
-            data-id="${item.id}">
+            data-id="${item.id_producao}">
 
             <i class="fa-solid fa-trash"></i>
 
             </button>
-
 
         </td>
 
@@ -295,9 +320,7 @@ function eventos(){
 
     .forEach(btn=>{
 
-
         btn.onclick = ()=>editar(btn.dataset.id);
-
 
     });
 
@@ -307,9 +330,7 @@ function eventos(){
 
     .forEach(btn=>{
 
-
         btn.onclick = ()=>excluir(btn.dataset.id);
-
 
     });
 
@@ -326,7 +347,7 @@ function editar(id){
 
     const p = producoes.find(
 
-        x=>x.id == id
+        x=>x.id_producao == id
 
     );
 
@@ -335,38 +356,30 @@ function editar(id){
 
 
     document.getElementById("tituloModal").textContent =
-
     "Editar Produção";
-
 
 
     produto.value = p.produto;
 
-
     maquina.value = p.maquina_id;
 
-
     quantidadeProduzida.value =
-
     p.quantidade_produzida;
 
 
-
     quantidadeEsperada.value =
-
     p.quantidade_esperada;
 
 
+    data.value =
+    p.data_producao;
 
-    data.value = p.data_producao;
 
-
-    status.value = p.status;
-
+    status.value =
+    p.status;
 
 
     abrirModal();
-
 
 }
 
@@ -383,7 +396,6 @@ async function excluir(id){
     return;
 
 
-
     await fetch(`${API}/${id}`,{
 
         method:"DELETE"
@@ -391,9 +403,7 @@ async function excluir(id){
     });
 
 
-
     carregarProducoes();
-
 
 }
 
@@ -408,39 +418,30 @@ form.addEventListener("submit", async(e)=>{
     e.preventDefault();
 
 
-
     const obj = {
 
 
         produto: produto.value,
 
 
-        maquina_id: Number(maquina.value),
-
-
-
         quantidade_produzida:
-
         Number(quantidadeProduzida.value),
 
 
-
         quantidade_esperada:
-
         Number(quantidadeEsperada.value),
 
 
-
         data_producao:
-
         data.value,
 
 
+        maquina_id:
+        Number(maquina.value),
+
 
         status:
-
         status.value
-
 
     };
 
@@ -454,12 +455,9 @@ form.addEventListener("submit", async(e)=>{
 
     if(editando){
 
-
         url = `${API}/${editando}`;
 
-
         metodo = "PUT";
-
 
     }
 
@@ -467,21 +465,15 @@ form.addEventListener("submit", async(e)=>{
 
     await fetch(url,{
 
-
         method:metodo,
-
 
         headers:{
 
-
             "Content-Type":"application/json"
-
 
         },
 
-
         body:JSON.stringify(obj)
-
 
     });
 
@@ -497,21 +489,18 @@ form.addEventListener("submit", async(e)=>{
 
 
 // ======================================================
-// FILTROS
+// FILTRO
 // ======================================================
 
 pesquisa.addEventListener("keyup",filtrar);
 
-
 filtro.addEventListener("change",filtrar);
-
 
 
 function filtrar(){
 
 
     const texto = pesquisa.value.toLowerCase();
-
 
     const statusFiltro = filtro.value;
 
@@ -522,23 +511,17 @@ function filtrar(){
 
         const busca =
 
-
-        p.produto.toLowerCase()
-
-        .includes(texto)
+        p.produto.toLowerCase().includes(texto)
 
         ||
 
         String(p.maquina_nome || p.maquina_id)
-
         .toLowerCase()
-
         .includes(texto);
 
 
 
         const statusOk =
-
 
         statusFiltro === ""
 
@@ -554,7 +537,6 @@ function filtrar(){
     });
 
 
-
     renderizar(lista);
 
 
@@ -564,5 +546,7 @@ function filtrar(){
 // ======================================================
 // INICIALIZAÇÃO
 // ======================================================
+
+carregarMaquinas();
 
 carregarProducoes();

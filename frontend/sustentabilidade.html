@@ -3,30 +3,33 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EcoFactory | Sustentabilidade</title>
+<title>EcoFactory | Sustentabilidade</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
 
-    <link rel="stylesheet" href="css/sustentabilidade.css">
+<link rel="stylesheet" href="css/sustentabilidade.css">
 
 </head>
+
 
 <body>
 
 <div class="container">
 
+
 <aside class="sidebar">
+
 
 <div class="logo">
 
@@ -34,45 +37,81 @@
 <i class="fa-solid fa-industry"></i>
 </div>
 
+
 <div class="logo-text">
+
 <h2>EcoFactory</h2>
+
 <span>Industrial Manager</span>
-</div>
 
 </div>
+
+
+</div>
+
+
 
 <nav class="menu">
 
+
 <a href="index.html">
+
 <i class="fa-solid fa-chart-line"></i>
+
 Dashboard
+
 </a>
+
+
 
 <a href="maquinas.html">
+
 <i class="fa-solid fa-gears"></i>
+
 Máquinas
+
 </a>
+
+
 
 <a href="producao.html">
+
 <i class="fa-solid fa-boxes-stacked"></i>
+
 Produção
+
 </a>
+
+
 
 <a href="sustentabilidade.html" class="active">
+
 <i class="fa-solid fa-leaf"></i>
+
 Sustentabilidade
+
 </a>
 
+
+
 <a href="seguranca.html">
+
 <i class="fa-solid fa-triangle-exclamation"></i>
+
 Segurança
+
 </a>
+
+
 
 </nav>
 
+
 <div class="sidebar-footer">
 
-<img src="https://i.pravatar.cc/60" alt="">
+
+<img src="https://i.pravatar.cc/60">
+
 
 <div>
 
@@ -80,37 +119,61 @@ Segurança
 
 <p>admin@ecofactory.com</p>
 
-</div>
 
 </div>
+
+
+</div>
+
 
 </aside>
 
+
+
+
 <main class="content">
+
 
 <header class="topbar">
 
+
 <div>
+
 
 <h1>Sustentabilidade</h1>
 
-<span>Monitore indicadores ambientais da fábrica.</span>
+
+<span>
+Monitore indicadores ambientais da fábrica.
+</span>
+
 
 </div>
 
+
+
 <button class="btn btn-primary" id="novoRegistro">
+
 
 <i class="fa-solid fa-plus"></i>
 
 Novo Registro
 
+
 </button>
+
 
 </header>
 
+
+
+
 <section class="cards">
 
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -120,15 +183,21 @@ Novo Registro
 
 </div>
 
+
 <div class="card-icon blue">
 
 <i class="fa-solid fa-bolt"></i>
 
 </div>
 
+
 </div>
 
+
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -138,15 +207,22 @@ Novo Registro
 
 </div>
 
+
 <div class="card-icon green">
 
 <i class="fa-solid fa-droplet"></i>
 
 </div>
 
+
 </div>
 
+
+
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -156,15 +232,22 @@ Novo Registro
 
 </div>
 
+
 <div class="card-icon yellow">
 
 <i class="fa-solid fa-trash"></i>
 
 </div>
 
+
 </div>
 
+
+
+
+
 <div class="card">
+
 
 <div class="card-info">
 
@@ -174,90 +257,114 @@ Novo Registro
 
 </div>
 
+
 <div class="card-icon red">
 
 <i class="fa-solid fa-recycle"></i>
 
 </div>
 
+
 </div>
+
+
 
 </section>
 
+
+
+
+
 <div class="panel">
+
 
 <div class="grid-2">
 
+
 <div class="form-group">
+
 
 <label>Pesquisar</label>
 
+
 <input
+
 type="text"
+
 id="pesquisa"
-placeholder="Digite o setor">
+
+placeholder="Digite um registro">
+
 
 </div>
 
-<div class="form-group">
 
-<label>Tipo</label>
-
-<select id="filtroTipo">
-
-<option value="">Todos</option>
-
-<option value="Energia">Energia</option>
-
-<option value="Água">Água</option>
-
-<option value="Resíduo">Resíduo</option>
-
-</select>
 
 </div>
 
-</div>
 
 </div>
+
+
+
+
 
 <div class="panel mt-20">
 
+
 <table>
+
 
 <thead>
 
+
 <tr>
 
-<th>Setor</th>
 
-<th>Tipo</th>
+<th>Energia</th>
 
-<th>Quantidade</th>
+<th>Água</th>
+
+<th>Resíduos</th>
+
+<th>Reciclado</th>
 
 <th>Data</th>
 
 <th>Ações</th>
 
+
 </tr>
+
 
 </thead>
 
+
+
 <tbody id="listaSustentabilidade">
+
 
 </tbody>
 
+
+
 </table>
 
-</div>
 
+</div>
 </main>
 
+
 </div>
+
+
+
 
 <div class="modal" id="modal">
 
+
 <div class="modal-content">
+
 
 <h2 id="tituloModal">
 
@@ -265,92 +372,196 @@ Novo Registro
 
 </h2>
 
+
+
 <form id="formRegistro">
 
-<div class="grid-2">
 
-<div class="form-group">
-
-<label>Setor</label>
-
-<input id="setor" required>
-
-</div>
-
-<div class="form-group">
-
-<label>Tipo</label>
-
-<select id="tipo">
-
-<option>Energia</option>
-
-<option>Água</option>
-
-<option>Resíduo</option>
-
-</select>
-
-</div>
-
-</div>
 
 <div class="grid-2">
 
+
+
 <div class="form-group">
 
-<label>Quantidade</label>
+
+<label>Consumo de Energia</label>
+
 
 <input
+
 type="number"
-id="quantidade"
+
+id="consumoEnergia"
+
 required>
 
+
 </div>
+
+
+
 
 <div class="form-group">
 
-<label>Data</label>
+
+<label>Consumo de Água</label>
+
 
 <input
-type="date"
-id="data"
+
+type="number"
+
+id="consumoAgua"
+
 required>
 
-</div>
 
 </div>
+
+
+
+</div>
+
+
+
+
+
+<div class="grid-2">
+
+
+
+<div class="form-group">
+
+
+<label>Quantidade de Resíduos</label>
+
+
+<input
+
+type="number"
+
+id="quantidadeResiduos"
+
+required>
+
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+<label>Quantidade Reciclada</label>
+
+
+<input
+
+type="number"
+
+id="quantidadeReciclada"
+
+required>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<div class="form-group">
+
+
+<label>Data do Registro</label>
+
+
+<input
+
+type="date"
+
+id="data"
+
+required>
+
+
+</div>
+
+
+
+
 
 <div
+
 class="mt-20"
+
 style="display:flex;justify-content:flex-end;gap:15px;">
 
+
+
+
+
 <button
+
 type="button"
+
 class="btn btn-danger"
+
 id="cancelar">
+
 
 Cancelar
 
+
 </button>
 
+
+
+
+
 <button
+
 class="btn btn-success">
+
 
 Salvar
 
+
 </button>
 
+
+
+
+
 </div>
+
+
 
 </form>
 
-</div>
+
 
 </div>
+
+
+
+</div>
+
+
+
+
 
 <script src="js/sustentabilidade.js"></script>
 
+
+
 </body>
+
 
 </html>

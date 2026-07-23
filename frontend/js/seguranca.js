@@ -1,44 +1,48 @@
-let ocorrencias = JSON.parse(localStorage.getItem("ocorrencias")) || [
-    {
-        id: 1,
-        funcionario: "Carlos Silva",
-        local: "Setor A",
-        descricao: "Uso incorreto de EPI",
-        nivel: "Médio",
-        data: "2026-07-16"
-    },
-    {
-        id: 2,
-        funcionario: "Mariana Souza",
-        local: "Almoxarifado",
-        descricao: "Pequeno vazamento",
-        nivel: "Baixo",
-        data: "2026-07-17"
-    },
-    {
-        id: 3,
-        funcionario: "Pedro Oliveira",
-        local: "Linha 2",
-        descricao: "Princípio de incêndio",
-        nivel: "Alto",
-        data: "2026-07-18"
-    }
-];
+let ocorrencias = [];
+
+const API = "http://localhost:3000/api/seguranca";
 
 let editando = null;
 
+
 const tbody = document.getElementById("listaOcorrencias");
+
 const modal = document.getElementById("modal");
+
 const form = document.getElementById("formOcorrencia");
+
 const pesquisa = document.getElementById("pesquisa");
+
 const filtro = document.getElementById("filtroNivel");
 
+
+
+const tipoOcorrencia = document.getElementById("tipo_ocorrencia");
+
+const local = document.getElementById("local");
+
+const dataOcorrencia = document.getElementById("data_ocorrencia");
+
+const nivelRisco = document.getElementById("nivel_risco");
+
+const descricao = document.getElementById("descricao");
+
+const medidaPreventiva = document.getElementById("medida_preventiva");
+
+
+
+
+
 document.getElementById("novaOcorrencia").onclick = abrirModal;
+
 document.getElementById("cancelar").onclick = fecharModal;
 
-window.onclick = (e) => {
 
-    if (e.target === modal) {
+
+
+window.onclick = (e)=>{
+
+    if(e.target === modal){
 
         fecharModal();
 
@@ -46,214 +50,511 @@ window.onclick = (e) => {
 
 };
 
-function salvar() {
 
-    localStorage.setItem(
-        "ocorrencias",
-        JSON.stringify(ocorrencias)
-    );
 
-}
 
-function abrirModal() {
 
-    modal.style.display = "flex";
 
-}
+// BUSCAR OCORRÊNCIAS
 
-function fecharModal() {
+async function carregarOcorrencias(){
 
-    modal.style.display = "none";
 
-    form.reset();
+    try{
 
-    editando = null;
 
-    document.getElementById("tituloModal").textContent = "Nova Ocorrência";
+        const resposta = await fetch(API);
 
-}
 
-function atualizarCards() {
 
-    document.getElementById("totalOcorrencias").textContent =
-        ocorrencias.length;
+        if(!resposta.ok){
 
-    document.getElementById("baixoRisco").textContent =
-        ocorrencias.filter(o => o.nivel === "Baixo").length;
+            throw new Error("Erro ao buscar ocorrências");
 
-    document.getElementById("medioRisco").textContent =
-        ocorrencias.filter(o => o.nivel === "Médio").length;
+        }
 
-    document.getElementById("altoRisco").textContent =
-        ocorrencias.filter(o => o.nivel === "Alto").length;
 
-}
 
-function renderizar(lista = ocorrencias) {
+        ocorrencias = await resposta.json();
 
-    tbody.innerHTML = "";
 
-    lista.forEach(item => {
 
-        const tr = document.createElement("tr");
+        renderizar();
 
-        tr.innerHTML = `
 
-        <td>${item.funcionario}</td>
 
-        <td>${item.local}</td>
+    }catch(erro){
 
-        <td>${item.descricao}</td>
-
-        <td>
-            <span class="status ${item.nivel.toLowerCase()}">
-                ${item.nivel}
-            </span>
-        </td>
-
-        <td>${item.data}</td>
-
-        <td>
-
-            <button class="btn btn-warning editar" data-id="${item.id}">
-                <i class="fa-solid fa-pen"></i>
-            </button>
-
-            <button class="btn btn-danger excluir" data-id="${item.id}">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-
-        </td>
-
-        `;
-
-        tbody.appendChild(tr);
-
-    });
-
-    adicionarEventos();
-
-    atualizarCards();
-
-}
-
-function adicionarEventos() {
-
-    document.querySelectorAll(".editar").forEach(btn => {
-
-        btn.onclick = () => editar(btn.dataset.id);
-
-    });
-
-    document.querySelectorAll(".excluir").forEach(btn => {
-
-        btn.onclick = () => excluir(btn.dataset.id);
-
-    });
-
-}
-
-function editar(id) {
-
-    const item = ocorrencias.find(o => o.id == id);
-
-    editando = id;
-
-    document.getElementById("tituloModal").textContent =
-        "Editar Ocorrência";
-
-    funcionario.value = item.funcionario;
-    local.value = item.local;
-    descricao.value = item.descricao;
-    nivel.value = item.nivel;
-    data.value = item.data;
-
-    abrirModal();
-
-}
-
-function excluir(id) {
-
-    if (!confirm("Deseja excluir esta ocorrência?")) return;
-
-    ocorrencias = ocorrencias.filter(o => o.id != id);
-
-    salvar();
-
-    renderizar();
-
-}
-
-form.addEventListener("submit", (e) => {
-
-    e.preventDefault();
-
-    const item = {
-
-        id: editando ? Number(editando) : Date.now(),
-
-        funcionario: funcionario.value,
-
-        local: local.value,
-
-        descricao: descricao.value,
-
-        nivel: nivel.value,
-
-        data: data.value
-
-    };
-
-    if (editando) {
-
-        const indice = ocorrencias.findIndex(o => o.id == editando);
-
-        ocorrencias[indice] = item;
-
-    } else {
-
-        ocorrencias.push(item);
+        console.error(erro);
 
     }
 
-    salvar();
-
-    renderizar();
-
-    fecharModal();
-
-});
-
-pesquisa.addEventListener("keyup", filtrar);
-
-filtro.addEventListener("change", filtrar);
-
-function filtrar() {
-
-    const texto = pesquisa.value.toLowerCase();
-
-    const nivelFiltro = filtro.value;
-
-    const lista = ocorrencias.filter(item => {
-
-        const busca =
-
-            item.funcionario.toLowerCase().includes(texto) ||
-
-            item.local.toLowerCase().includes(texto);
-
-        const nivelOk =
-
-            nivelFiltro === "" ||
-
-            item.nivel === nivelFiltro;
-
-        return busca && nivelOk;
-
-    });
-
-    renderizar(lista);
 
 }
 
-renderizar();
+
+
+
+
+
+// MODAL
+
+function abrirModal(){
+
+    modal.style.display="flex";
+
+}
+
+
+
+
+
+function fecharModal(){
+
+
+    modal.style.display="none";
+
+
+    form.reset();
+
+
+    editando=null;
+
+
+    document.getElementById("tituloModal").textContent =
+
+    "Nova Ocorrência";
+
+
+}
+
+
+
+
+
+
+
+// CARDS
+
+function atualizarCards(){
+
+
+
+    document.getElementById("totalOcorrencias").textContent =
+
+    ocorrencias.length;
+
+
+
+
+    document.getElementById("baixoRisco").textContent =
+
+    ocorrencias.filter(
+
+        o=>o.nivel_risco==="Baixo"
+
+    ).length;
+
+
+
+
+
+    document.getElementById("medioRisco").textContent =
+
+    ocorrencias.filter(
+
+        o=>o.nivel_risco==="Médio"
+
+    ).length;
+
+
+
+
+
+    document.getElementById("altoRisco").textContent =
+
+    ocorrencias.filter(
+
+        o=>o.nivel_risco==="Alto"
+
+    ).length;
+
+
+
+}
+// RENDERIZAR TABELA
+
+function renderizar(lista = ocorrencias){
+
+
+    tbody.innerHTML = "";
+
+
+
+    lista.forEach(item=>{
+
+
+        const tr = document.createElement("tr");
+
+
+
+        tr.innerHTML = `
+
+
+
+        <td>${item.tipo_ocorrencia}</td>
+
+
+
+        <td>${item.local}</td>
+
+
+
+        <td>
+
+
+            <span class="status">
+
+                ${item.nivel_risco}
+
+            </span>
+
+
+        </td>
+
+
+
+        <td>${item.data_ocorrencia}</td>
+
+
+
+        <td>${item.descricao}</td>
+
+
+
+        <td>
+
+
+
+            <button
+
+            class="btn btn-danger excluir"
+
+            data-id="${item.id_seguranca}">
+
+
+            <i class="fa-solid fa-trash"></i>
+
+
+            </button>
+
+
+
+        </td>
+
+
+
+        `;
+
+
+
+        tbody.appendChild(tr);
+
+
+
+    });
+
+
+
+    eventos();
+
+
+    atualizarCards();
+
+
+}
+
+
+
+
+
+
+
+// EVENTOS
+
+function eventos(){
+
+
+    document.querySelectorAll(".excluir")
+
+    .forEach(btn=>{
+
+
+        btn.onclick = ()=>{
+
+            excluir(btn.dataset.id);
+
+        };
+
+
+    });
+
+
+}
+
+
+
+
+
+
+
+// EXCLUIR
+
+async function excluir(id){
+
+
+    if(!confirm("Deseja excluir esta ocorrência?"))
+
+    return;
+
+
+
+
+    await fetch(`${API}/${id}`,{
+
+
+        method:"DELETE"
+
+
+    });
+
+
+
+    carregarOcorrencias();
+
+
+}
+
+
+
+
+
+
+
+
+// SALVAR
+
+form.addEventListener("submit", async(e)=>{
+
+
+    e.preventDefault();
+
+
+
+    const ocorrencia = {
+
+
+
+        tipo_ocorrencia:
+
+        tipoOcorrencia.value,
+
+
+
+        local:
+
+        local.value,
+
+
+
+        data_ocorrencia:
+
+        dataOcorrencia.value,
+
+
+
+        nivel_risco:
+
+        nivelRisco.value,
+
+
+
+        descricao:
+
+        descricao.value,
+
+
+
+        medida_preventiva:
+
+        medidaPreventiva.value
+
+
+
+    };
+
+
+
+
+
+    let url = API;
+
+    let metodo = "POST";
+
+
+
+
+
+    if(editando){
+
+
+        url = `${API}/${editando}`;
+
+        metodo = "PUT";
+
+
+    }
+
+
+
+
+
+    await fetch(url,{
+
+
+
+        method:metodo,
+
+
+
+        headers:{
+
+
+            "Content-Type":"application/json"
+
+
+        },
+
+
+
+        body:JSON.stringify(ocorrencia)
+
+
+
+    });
+
+
+
+
+
+    await carregarOcorrencias();
+
+
+
+    fecharModal();
+
+
+
+});
+
+
+
+
+
+
+
+
+
+// PESQUISA/FILTRO
+
+pesquisa.addEventListener("keyup",filtrar);
+
+
+filtro.addEventListener("change",filtrar);
+
+
+
+
+
+function filtrar(){
+
+
+
+    const texto = pesquisa.value.toLowerCase();
+
+
+
+    const nivelFiltro = filtro.value;
+
+
+
+
+    const lista = ocorrencias.filter(item=>{
+
+
+
+        const busca =
+
+
+        item.tipo_ocorrencia
+
+        .toLowerCase()
+
+        .includes(texto)
+
+
+
+        ||
+
+
+
+        item.local
+
+        .toLowerCase()
+
+        .includes(texto);
+
+
+
+
+
+        const nivelOk =
+
+
+
+        nivelFiltro === ""
+
+        ||
+
+        item.nivel_risco === nivelFiltro;
+
+
+
+
+
+        return busca && nivelOk;
+
+
+
+    });
+
+
+
+
+
+    renderizar(lista);
+
+
+
+}
+
+
+
+
+
+
+
+
+// INICIALIZAÇÃO
+
+carregarOcorrencias();
